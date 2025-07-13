@@ -37,7 +37,7 @@ public class ClientController {
         return clientService.getByName(name);
     }
     @GetMapping("/getByPhoneNumber")
-    public List<Client> getClientByName(@RequestParam String phoneNumber) {
+    public List<Client> getClientByPhoneNumber(@RequestParam String phoneNumber) {
         return clientService.getByPhoneNumber(phoneNumber);
     }
 }

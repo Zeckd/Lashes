@@ -76,7 +76,7 @@
         tableBody.innerHTML = '';
 
         try {
-            const response = await fetch('http://localhost:8080/client/getAll');
+            const response = await fetch('http://192.168.0.103:8080/client/getAll');
             if (!response.ok) throw new Error('Ошибка загрузки клиентов');
 
             const clients = await response.json();
@@ -111,7 +111,7 @@
         const body = { name, phoneNumber, data };
 
         try {
-            const response = await fetch('http://localhost:8080/client/create', {
+            const response = await fetch('http://192.168.0.103:8080/client/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -21,7 +21,7 @@ public class ClientController {
 
     @PostMapping("/create")
 
-    public Client createClient(@Valid @RequestBody ClientCreateDto clientCreateDto) {
+    public Client createClient(@Valid @RequestBody(required = false) ClientCreateDto clientCreateDto) {
         return clientService.create(clientCreateDto);
     }
     @PutMapping("/update")

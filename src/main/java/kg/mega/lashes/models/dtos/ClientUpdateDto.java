@@ -1,5 +1,6 @@
 package kg.mega.lashes.models.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 
@@ -11,6 +12,7 @@ public record ClientUpdateDto(
         )
         @Schema(description = "Дополнительный номер телефона (только в формате +996)", example = "+996")
         String phoneNumber,
-        String data
+        @JsonProperty("data")
+         String comment
 ) {
 }

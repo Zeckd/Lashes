@@ -38,10 +38,21 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client update(ClientUpdateDto clientUpdateDto, Long id) {
-        Client clientId = clientRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Client client = ClientMapper.INSTANCE.clientUpdateDtoToClient(clientUpdateDto);
+        Client client = clientRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (clientUpdateDto.name() != null && !clientUpdateDto.name().isEmpty()) {
+            client.setName(clientUpdateDto.name());
+        }
+        if (clientUpdateDto.phoneNumber() != null && !clientUpdateDto.phoneNumber().isEmpty()) {
+            client.setPhoneNumber(clientUpdateDto.phoneNumber());
+        }
+        if (clientUpdateDto.comment() != null && !clientUpdateDto.comment().isEmpty()) {
+            client.setData(clientUpdateDto.comment());
+        }
+
         client.setDateOfVisit(LocalDate.now());
-        client.setId(clientId.getId());
+
         return clientRepo.save(client);
     }
 

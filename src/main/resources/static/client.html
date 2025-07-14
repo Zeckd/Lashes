@@ -4,20 +4,148 @@
     <meta charset="UTF-8">
     <title>Управление клиентами</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        ::placeholder {
+            color: #ccc !important;
+            opacity: 1; /* Firefox */
+        }
+        .btn-neon {
+            border: 2px solid #0ff;
+            color: #0ff;
+            background: transparent;
+            transition: 0.3s ease-in-out;
+        }
+        .btn-neon:hover {
+            background-color: #0ff;
+            color: #000;
+            box-shadow: 0 0 15px #0ff;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+        }
+        /* Поисковые поля — белый текст без свечения */
+        #searchName, #searchPhone {
+            color: #fff !important;
+            background-color: #222;
+            border: 1px solid #444;
+            transition: 0.3s ease-in-out;
+            text-shadow: none;
+        }
+        /* Подсветка рамки и текста при наведении и фокусе */
+        #searchName:hover, #searchPhone:hover,
+        #searchName:focus, #searchPhone:focus {
+            border-color: #fff !important;
+            box-shadow: 0 0 6px #fff !important;
+            color: #fff !important;
+            outline: none;
+            text-shadow: none;
+        }
+        /* Формы и лейблы — белый текст без свечения */
+        .form-control, .form-label {
+            background-color: #222 !important;
+            color: #fff !important;
+            border-color: #444 !important;
+            text-shadow: none !important;
+        }
+        .form-control:focus {
+            background-color: #222 !important;
+            color: #fff !important;
+            border-color: #0ff !important;
+            box-shadow: 0 0 8px #0ff !important;
+        }
+        /* Таблица — белый текст, заголовки с неоновым цветом */
+        .table {
+            color: #fff;
+            text-shadow: none;
+        }
+        .table th {
+            background-color: #2a2a2a;
+            color: #0ff !important;
+            text-shadow: none;
+        }
+        .table td {
+            background-color: #1c1c1c;
+            color: #fff !important;
+            text-shadow: none;
+        }
+        /* Уведомления */
+        .alert-success {
+            background-color: #004d40;
+            border-color: #00796b;
+            color: #a7ffeb;
+        }
+        .alert-danger {
+            background-color: #4a1a1a;
+            color: #ff8a80;
+            border-color: #e53935;
+        }
+        /* Заголовки и лейблы — белый без свечения */
+        h2, h5, label {
+            color: #fff;
+            text-shadow: none;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
-    <h2 class="mb-4">Управление клиентами</h2>
+<div class="container py-5">
+    <h2 class="mb-4 text-center"><i class="fas fa-users-gear me-2"></i>Управление клиентами</h2>
 
-    <!-- Кнопки переключения -->
-    <div class="mb-4">
-        <button class="btn btn-success me-2" onclick="showForm()">➕ Создать клиента</button>
-        <button class="btn btn-primary" onclick="loadClients()">📋 Показать всех клиентов</button>
+    <!-- Кнопки -->
+    <div class="mb-4 text-center">
+        <button class="btn btn-neon me-2" onclick="showForm()"><i class="fas fa-plus"></i> Создать клиента</button>
+        <button class="btn btn-neon" onclick="loadClients()"><i class="fas fa-list"></i> Показать всех клиентов</button>
+        <button class="btn btn-neon mt-2" onclick="showUpdateForm()"><i class="fas fa-edit"></i> Обновить клиента</button>
+    </div>
+
+    <!-- Поисковые строки -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <input type="text" id="searchName" class="form-control" placeholder="Поиск клиента по имени (Например: Анна)">
+        </div>
+        <div class="col-md-6 mb-3">
+            <input type="text" id="searchPhone" class="form-control" placeholder="Поиск клиента по телефону (Пример: +996700111111)">
+        </div>
+        <div class="col-12 text-center">
+            <button class="btn btn-neon me-2" onclick="searchByName()"><i class="fas fa-search"></i> Найти по имени</button>
+            <button class="btn btn-neon" onclick="searchByPhone()"><i class="fas fa-search"></i> Найти по телефону</button>
+        </div>
+    </div>
+
+    <!-- Форма обновления клиента -->
+    <div id="updateContainer" class="card p-4 shadow mb-4" style="display:none;">
+        <h5><i class="fas fa-edit me-2"></i>Обновить клиента</h5>
+        <form id="updateForm">
+            <div class="mb-3">
+                <label for="updateId" class="form-label">ID клиента</label>
+                <input type="number" class="form-control" id="updateId" required placeholder="Введите ID клиента">
+            </div>
+            <div class="mb-3">
+                <label for="updateName" class="form-label">Новое имя</label>
+                <input type="text" class="form-control" id="updateName" placeholder="Новое имя">
+            </div>
+            <div class="mb-3">
+                <label for="updatePhoneNumber" class="form-label">Новый телефон</label>
+                <input type="text" class="form-control" id="updatePhoneNumber" placeholder="Новый номер телефона">
+            </div>
+            <div class="mb-3">
+                <label for="updateData" class="form-label">Новые комментарии</label>
+                <textarea class="form-control" id="updateData" rows="3" placeholder="Новые данные"></textarea>
+            </div>
+            <button type="submit" class="btn btn-neon"><i class="fas fa-save"></i> Обновить</button>
+            <div id="updateResult" class="mt-3"></div>
+        </form>
     </div>
 
     <!-- Форма создания клиента -->
-    <div id="formContainer" class="card p-4 shadow-sm bg-white mb-4" style="display:none;">
+    <div id="formContainer" class="card p-4 shadow mb-4" style="display:none;">
         <form id="clientForm">
             <div class="mb-3">
                 <label for="name" class="form-label">Имя</label>
@@ -28,29 +156,28 @@
                 <input type="text" class="form-control" id="phoneNumber" required placeholder="+996xxxxxxxxx">
             </div>
             <div class="mb-3">
-                <label for="data" class="form-label">Данные (комментарии и т.д.)</label>
-                <textarea class="form-control" id="data" rows="3" placeholder="Комментарий или дополнительные данные..."></textarea>
+                <label for="data" class="form-label">Комментарий</label>
+                <textarea class="form-control" id="data" rows="3" placeholder="Комментарий..."></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Создать клиента</button>
+            <button type="submit" class="btn btn-neon"><i class="fas fa-paper-plane"></i> Создать</button>
             <div id="result" class="mt-3"></div>
         </form>
     </div>
 
     <!-- Таблица клиентов -->
-    <div id="tableContainer" class="card p-4 shadow-sm bg-white" style="display:none;">
-        <h5>Список клиентов:</h5>
+    <div id="tableContainer" class="card p-4 shadow" style="display:none;">
+        <h5><i class="fas fa-table me-2"></i>Список клиентов</h5>
         <table class="table table-bordered table-striped mt-3">
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Имя</th>
-                <th>Номер телефона</th>
-                <th>Дата посещения</th>
+                <th>Телефон</th>
+                <th>Дата</th>
                 <th>Комментарий</th>
             </tr>
             </thead>
-            <tbody id="clientTableBody">
-            </tbody>
+            <tbody id="clientTableBody"></tbody>
         </table>
     </div>
 </div>
@@ -62,37 +189,47 @@
     const tableContainer = document.getElementById('tableContainer');
     const tableBody = document.getElementById('clientTableBody');
 
-    // Показываем форму
     function showForm() {
         formContainer.style.display = 'block';
         tableContainer.style.display = 'none';
         result.innerHTML = '';
     }
+    const updateForm = document.getElementById('updateForm');
+    const updateResult = document.getElementById('updateResult');
+    const updateContainer = document.getElementById('updateContainer');
 
-    // Показываем таблицу
-    async function loadClients() {
+    function showUpdateForm() {
+        updateContainer.style.display = 'block';
         formContainer.style.display = 'none';
+        tableContainer.style.display = 'none';
+        updateResult.innerHTML = '';
+    }
+
+    async function searchByName() {
+        const name = document.getElementById('searchName').value.trim();
+        if (!name) return alert('Введите имя для поиска');
+        formContainer.style.display = 'none';
+        updateContainer.style.display = 'none';
         tableContainer.style.display = 'block';
         tableBody.innerHTML = '';
 
         try {
-            const response = await fetch('http://192.168.0.103:8080/client/getAll');
-            if (!response.ok) throw new Error('Ошибка загрузки клиентов');
-
+            const response = await fetch(`http://localhost:8080/client/getByName?name=${encodeURIComponent(name)}`);
+            if (!response.ok) throw new Error('Ошибка поиска по имени');
             const clients = await response.json();
-            if (clients.length === 0) {
+
+            if (!clients.length) {
                 tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Нет данных</td></tr>';
             } else {
                 clients.forEach(client => {
-                    const row = `
-                        <tr>
-                            <td>${client.id ?? '-'}</td>
-                            <td>${client.name ?? '-'}</td>
-                            <td>${client.phoneNumber ?? '-'}</td>
-                            <td>${client.dateOfVisit ?? '-'}</td>
-                            <td>${client.data ?? '-'}</td>
-                        </tr>`;
-                    tableBody.innerHTML += row;
+                    tableBody.innerHTML += `
+          <tr>
+            <td>${client.id ?? '-'}</td>
+            <td>${client.name ?? '-'}</td>
+            <td>${client.phoneNumber ?? '-'}</td>
+            <td>${client.dateOfVisit ?? '-'}</td>
+            <td>${client.data ?? '-'}</td>
+          </tr>`;
                 });
             }
         } catch (err) {
@@ -100,7 +237,104 @@
         }
     }
 
-    // Обработка формы
+    async function searchByPhone() {
+        const phone = document.getElementById('searchPhone').value.trim();
+        if (!phone) return alert('Введите телефон для поиска');
+        formContainer.style.display = 'none';
+        updateContainer.style.display = 'none';
+        tableContainer.style.display = 'block';
+        tableBody.innerHTML = '';
+
+        try {
+            const response = await fetch(`http://localhost:8080/client/getByPhoneNumber?phoneNumber=${encodeURIComponent(phone)}`);
+            if (!response.ok) throw new Error('Ошибка поиска по телефону');
+            const clients = await response.json();
+
+            if (!clients.length) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Нет данных</td></tr>';
+            } else {
+                clients.forEach(client => {
+                    tableBody.innerHTML += `
+          <tr>
+            <td>${client.id ?? '-'}</td>
+            <td>${client.name ?? '-'}</td>
+            <td>${client.phoneNumber ?? '-'}</td>
+            <td>${client.dateOfVisit ?? '-'}</td>
+            <td>${client.data ?? '-'}</td>
+          </tr>`;
+                });
+            }
+        } catch (err) {
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-danger">Ошибка: ${err.message}</td></tr>`;
+        }
+    }
+
+    updateForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('updateId').value.trim();
+        if (!id) return alert('Введите ID клиента');
+
+        const updateData = {};
+        const name = document.getElementById('updateName').value.trim();
+        const phoneNumber = document.getElementById('updatePhoneNumber').value.trim();
+        const data = document.getElementById('updateData').value.trim();
+
+        if (name) updateData.name = name;
+        if (phoneNumber) updateData.phoneNumber = phoneNumber;
+        if (data) updateData.data = data;
+
+        try {
+            const response = await fetch(`http://localhost:8080/client/update?id=${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData),
+            });
+            if (!response.ok) throw new Error(await response.text());
+
+            const updatedClient = await response.json();
+            updateResult.innerHTML = `<div class="alert alert-success">Клиент обновлён! ID: ${updatedClient.id}</div>`;
+            updateForm.reset();
+        } catch (error) {
+            updateResult.innerHTML = `<div class="alert alert-danger">Ошибка: ${error.message}</div>`;
+        }
+    });
+
+    async function loadClients() {
+        formContainer.style.display = 'none';
+        tableContainer.style.display = 'block';
+        tableBody.innerHTML = '';
+
+        try {
+            const response = await fetch('http://localhost:8080/client/getAll');
+            if (!response.ok) throw new Error('Ошибка загрузки');
+
+            const clients = await response.json();
+            if (!clients.length) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Нет данных</td></tr>';
+            } else {
+                clients.forEach(client => {
+                    tableBody.innerHTML += `
+            <tr>
+              <td>${client.id ?? '-'}</td>
+              <td>${client.name ?? '-'}</td>
+              <td>${client.phoneNumber ?? '-'}</td>
+              <td>${client.dateOfVisit ?? '-'}</td>
+              <td>${client.data ?? '-'}</td>
+            </tr>`;
+                });
+            }
+        } catch (err) {
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-danger">Ошибка: ${err.message}</td></tr>`;
+        }
+    }
+
+    formContainer.style.display = 'none';
+    updateContainer.style.display = 'none';
+    tableContainer.style.display = 'none';
+    result.innerHTML = '';
+    updateResult.innerHTML = '';
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -111,26 +345,34 @@
         const body = { name, phoneNumber, data };
 
         try {
-            const response = await fetch('http://192.168.0.103:8080/client/create', {
+            const response = await fetch('http://localhost:8080/client/create', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
 
-            if (!response.ok) {
-                const errText = await response.text();
-                throw new Error(errText);
-            }
+            if (!response.ok) throw new Error(await response.text());
 
             const resultData = await response.json();
-            result.innerHTML = `<div class="alert alert-success">Клиент успешно создан! ID: ${resultData.id}</div>`;
+            result.innerHTML = `<div class="alert alert-success">Клиент создан! ID: ${resultData.id}</div>`;
             form.reset();
         } catch (error) {
             result.innerHTML = `<div class="alert alert-danger">Ошибка: ${error.message}</div>`;
         }
     });
+    function hideAll() {
+        formContainer.style.display = 'none';
+        updateContainer.style.display = 'none';
+        tableContainer.style.display = 'none';
+        result.innerHTML = '';
+        updateResult.innerHTML = '';
+    }
+
+    function showForm() {
+        hideAll();
+        formContainer.style.display = 'block';
+    }
+
 </script>
 
 </body>

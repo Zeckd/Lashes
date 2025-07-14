@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>kg.mega</groupId>
-    <artifactId>kindergarten</artifactId>
+    <artifactId>lashes</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>kindergarten</name>
-    <description>kindergarten</description>
+    <name>lashes</name>
+    <description>lashes</description>
     <url/>
     <licenses>
         <license/>

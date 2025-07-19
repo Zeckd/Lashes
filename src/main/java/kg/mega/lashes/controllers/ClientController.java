@@ -28,7 +28,7 @@ public class ClientController {
     public Client createClient(@Valid @RequestBody(required = false) ClientCreateDto clientCreateDto) {
         return clientService.create(clientCreateDto);
     }
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     public Client updateClient(@Valid @RequestBody ClientUpdateDto clientUpdateDto, @PathVariable Long id) {
         return clientService.update(clientUpdateDto, id);
     }

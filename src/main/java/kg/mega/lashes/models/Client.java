@@ -1,5 +1,6 @@
 package kg.mega.lashes.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import kg.mega.lashes.enums.Delete;
@@ -22,6 +23,7 @@ public class Client {
     @JoinColumn(name = "Данные")
     private String data;
     private LocalDate visitDate;
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime visitTime;
     private String dayOfVisit;
     @JsonIgnore

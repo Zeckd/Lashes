@@ -5,8 +5,12 @@ import kg.mega.lashes.models.Client;
 import kg.mega.lashes.models.dtos.ClientCreateDto;
 import kg.mega.lashes.models.dtos.ClientUpdateDto;
 import kg.mega.lashes.services.ClientService;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -40,4 +44,14 @@ public class ClientController {
     public List<Client> getClientByPhoneNumber(@RequestParam String phoneNumber) {
         return clientService.getByPhoneNumber(phoneNumber);
     }
+    @DeleteMapping("/delete")
+    public Client deleteClient(@RequestParam Long id) {
+        return clientService.delete(id);
+    }
+    @GetMapping("/taken-times")
+    public ResponseEntity<List<LocalTime>> getTakenTimes(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.ok(clientService.getTakenTimesByDate(date));
+    }
+
 }

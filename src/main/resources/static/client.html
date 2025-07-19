@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Управление клиентами</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+            rel="stylesheet"
+    />
     <style>
         body {
             background-color: #121212;
@@ -13,7 +18,7 @@
         }
         ::placeholder {
             color: #ccc !important;
-            opacity: 1; /* Firefox */
+            opacity: 1;
         }
         .btn-neon {
             border: 2px solid #0ff;
@@ -30,25 +35,26 @@
             background-color: #1e1e1e;
             border: 1px solid #333;
         }
-        /* Поисковые поля — белый текст без свечения */
-        #searchName, #searchPhone {
+        #searchName,
+        #searchPhone {
             color: #fff !important;
             background-color: #222;
             border: 1px solid #444;
             transition: 0.3s ease-in-out;
             text-shadow: none;
         }
-        /* Подсветка рамки и текста при наведении и фокусе */
-        #searchName:hover, #searchPhone:hover,
-        #searchName:focus, #searchPhone:focus {
+        #searchName:hover,
+        #searchPhone:hover,
+        #searchName:focus,
+        #searchPhone:focus {
             border-color: #fff !important;
             box-shadow: 0 0 6px #fff !important;
             color: #fff !important;
             outline: none;
             text-shadow: none;
         }
-        /* Формы и лейблы — белый текст без свечения */
-        .form-control, .form-label {
+        .form-control,
+        .form-label {
             background-color: #222 !important;
             color: #fff !important;
             border-color: #444 !important;
@@ -60,7 +66,6 @@
             border-color: #0ff !important;
             box-shadow: 0 0 8px #0ff !important;
         }
-        /* Таблица — белый текст, заголовки с неоновым цветом */
         .table {
             color: #fff;
             text-shadow: none;
@@ -75,7 +80,6 @@
             color: #fff !important;
             text-shadow: none;
         }
-        /* Уведомления */
         .alert-success {
             background-color: #004d40;
             border-color: #00796b;
@@ -86,62 +90,64 @@
             color: #ff8a80;
             border-color: #e53935;
         }
-        /* Заголовки и лейблы — белый без свечения */
-        h2, h5, label {
+        h2,
+        h5,
+        label {
             color: #fff;
             text-shadow: none;
+        }
+        .day-of-week {
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #0ff;
         }
     </style>
 </head>
 <body>
-
 <div class="container py-5">
-    <h2 class="mb-4 text-center"><i class="fas fa-users-gear me-2"></i>Управление клиентами</h2>
+    <h2 class="mb-4 text-center">
+        <i class="fas fa-users-gear me-2"></i>Управление клиентами
+    </h2>
 
     <!-- Кнопки -->
     <div class="mb-4 text-center">
-        <button class="btn btn-neon me-2" onclick="showForm()"><i class="fas fa-plus"></i> Создать клиента</button>
-        <button class="btn btn-neon" onclick="loadClients()"><i class="fas fa-list"></i> Показать всех клиентов</button>
-        <button class="btn btn-neon mt-2" onclick="showUpdateForm()"><i class="fas fa-edit"></i> Обновить клиента</button>
+        <button class="btn btn-neon me-2" onclick="showForm()">
+            <i class="fas fa-plus"></i> Создать клиента
+        </button>
+        <button class="btn btn-neon" onclick="loadClients()">
+            <i class="fas fa-list"></i> Показать всех клиентов
+        </button>
+        <button class="btn btn-neon mt-2" onclick="showUpdateForm()">
+            <i class="fas fa-edit"></i> Обновить клиента
+        </button>
     </div>
 
     <!-- Поисковые строки -->
     <div class="row mb-4">
         <div class="col-md-6 mb-3">
-            <input type="text" id="searchName" class="form-control" placeholder="Поиск клиента по имени (Например: Анна)">
+            <input
+                    type="text"
+                    id="searchName"
+                    class="form-control"
+                    placeholder="Поиск клиента по имени (Например: Анна)"
+            />
         </div>
         <div class="col-md-6 mb-3">
-            <input type="text" id="searchPhone" class="form-control" placeholder="Поиск клиента по телефону (Пример: +996700111111)">
+            <input
+                    type="text"
+                    id="searchPhone"
+                    class="form-control"
+                    placeholder="Поиск клиента по телефону (Пример: +996700111111)"
+            />
         </div>
         <div class="col-12 text-center">
-            <button class="btn btn-neon me-2" onclick="searchByName()"><i class="fas fa-search"></i> Найти по имени</button>
-            <button class="btn btn-neon" onclick="searchByPhone()"><i class="fas fa-search"></i> Найти по телефону</button>
+            <button class="btn btn-neon me-2" onclick="searchByName()">
+                <i class="fas fa-search"></i> Найти по имени
+            </button>
+            <button class="btn btn-neon" onclick="searchByPhone()">
+                <i class="fas fa-search"></i> Найти по телефону
+            </button>
         </div>
-    </div>
-
-    <!-- Форма обновления клиента -->
-    <div id="updateContainer" class="card p-4 shadow mb-4" style="display:none;">
-        <h5><i class="fas fa-edit me-2"></i>Обновить клиента</h5>
-        <form id="updateForm">
-            <div class="mb-3">
-                <label for="updateId" class="form-label">ID клиента</label>
-                <input type="number" class="form-control" id="updateId" required placeholder="Введите ID клиента">
-            </div>
-            <div class="mb-3">
-                <label for="updateName" class="form-label">Новое имя</label>
-                <input type="text" class="form-control" id="updateName" placeholder="Новое имя">
-            </div>
-            <div class="mb-3">
-                <label for="updatePhoneNumber" class="form-label">Новый телефон</label>
-                <input type="text" class="form-control" id="updatePhoneNumber" placeholder="Новый номер телефона">
-            </div>
-            <div class="mb-3">
-                <label for="updateData" class="form-label">Новые комментарии</label>
-                <textarea class="form-control" id="updateData" rows="3" placeholder="Новые данные"></textarea>
-            </div>
-            <button type="submit" class="btn btn-neon"><i class="fas fa-save"></i> Обновить</button>
-            <div id="updateResult" class="mt-3"></div>
-        </form>
     </div>
 
     <!-- Форма создания клиента -->
@@ -149,20 +155,122 @@
         <form id="clientForm">
             <div class="mb-3">
                 <label for="name" class="form-label">Имя</label>
-                <input type="text" class="form-control" id="name" required placeholder="Введите имя">
+                <input type="text" class="form-control" id="name" required placeholder="Введите имя" />
             </div>
             <div class="mb-3">
                 <label for="phoneNumber" class="form-label">Номер телефона</label>
-                <input type="text" class="form-control" id="phoneNumber" required placeholder="+996xxxxxxxxx">
+                <input
+                        type="text"
+                        class="form-control"
+                        id="phoneNumber"
+                        required
+                        placeholder="+996xxxxxxxxx"
+                />
+            </div>
+            <div class="mb-3">
+                <label for="visitDate" class="form-label">Дата визита</label>
+                <input type="date" class="form-control" id="visitDate" required />
+                <div class="day-of-week" id="visitDay"></div>
+            </div>
+            <div class="mb-3">
+                <label for="visitTime" class="form-label">Время визита</label>
+                <select class="form-control" id="visitTime" required>
+                    <option value="">Выберите время</option>
+                    <option value="09:00">09:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="17:00">17:00</option>
+                    <option value="19:00">19:00</option>
+                    <option value="21:00">21:00</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="data" class="form-label">Комментарий</label>
-                <textarea class="form-control" id="data" rows="3" placeholder="Комментарий..."></textarea>
+                <textarea
+                        class="form-control"
+                        id="data"
+                        rows="3"
+                        placeholder="Комментарий..."
+                ></textarea>
             </div>
-            <button type="submit" class="btn btn-neon"><i class="fas fa-paper-plane"></i> Создать</button>
+            <button type="submit" class="btn btn-neon">
+                <i class="fas fa-paper-plane"></i> Создать
+            </button>
             <div id="result" class="mt-3"></div>
         </form>
     </div>
+
+    <!-- Форма обновления клиента -->
+    <div
+            id="updateContainer"
+            class="card p-4 shadow mb-4"
+            style="display:none;"
+    >
+        <h5><i class="fas fa-edit me-2"></i>Обновить клиента</h5>
+        <form id="updateForm">
+            <div class="mb-3">
+                <label for="updateId" class="form-label">ID клиента</label>
+                <input
+                        type="number"
+                        class="form-control"
+                        id="updateId"
+                        required
+                        placeholder="Введите ID клиента"
+                />
+            </div>
+            <div class="mb-3">
+                <label for="updateName" class="form-label">Новое имя</label>
+                <input
+                        type="text"
+                        class="form-control"
+                        id="updateName"
+                        placeholder="Новое имя"
+                />
+            </div>
+            <div class="mb-3">
+                <label for="updatePhoneNumber" class="form-label">Новый телефон</label>
+                <input
+                        type="text"
+                        class="form-control"
+                        id="updatePhoneNumber"
+                        placeholder="Новый номер телефона"
+                />
+            </div>
+            <div class="mb-3">
+                <label for="updateVisitDate" class="form-label">Новая дата визита</label>
+                <input type="date" class="form-control" id="updateVisitDate" />
+                <div class="day-of-week" id="updateVisitDay"></div>
+            </div>
+            <div class="mb-3">
+                <label for="updateVisitTime" class="form-label">Новое время визита</label>
+                <select class="form-control" id="updateVisitTime">
+                    <option value="">Выберите время</option>
+                    <option value="09:00">09:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="17:00">17:00</option>
+                    <option value="19:00">19:00</option>
+                    <option value="21:00">21:00</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="updateData" class="form-label">Новые комментарии</label>
+                <textarea
+                        class="form-control"
+                        id="updateData"
+                        rows="3"
+                        placeholder="Новые данные"
+                ></textarea>
+            </div>
+            <button type="submit" class="btn btn-neon">
+                <i class="fas fa-save"></i> Обновить
+            </button>
+            <div id="updateResult" class="mt-3"></div>
+        </form>
+    </div>
+
 
     <!-- Таблица клиентов -->
     <div id="tableContainer" class="card p-4 shadow" style="display:none;">
@@ -173,7 +281,10 @@
                 <th>ID</th>
                 <th>Имя</th>
                 <th>Телефон</th>
-                <th>Дата</th>
+                <th>Дата визита</th>
+                <th>Дата визита</th>
+                <th>Время визита</th>
+                <th>День недели</th>
                 <th>Комментарий</th>
             </tr>
             </thead>
@@ -183,197 +294,389 @@
 </div>
 
 <script>
-    const form = document.getElementById('clientForm');
-    const result = document.getElementById('result');
-    const formContainer = document.getElementById('formContainer');
-    const tableContainer = document.getElementById('tableContainer');
-    const tableBody = document.getElementById('clientTableBody');
+    // --- Вспомогательная функция для дня недели на русском ---
+    function getRussianDayOfWeek(dateStr) {
+        const days = [
+            "Воскресенье",
+            "Понедельник",
+            "Вторник",
+            "Среда",
+            "Четверг",
+            "Пятница",
+            "Суббота",
+        ];
+        const d = new Date(dateStr);
+        return days[d.getDay()];
+    }
 
+    // --- Показываем форму создания и скрываем остальные ---
+    function hideAll() {
+        formContainer.style.display = "none";
+        updateContainer.style.display = "none";
+        tableContainer.style.display = "none";
+        result.innerHTML = "";
+        updateResult.innerHTML = "";
+    }
     function showForm() {
-        formContainer.style.display = 'block';
-        tableContainer.style.display = 'none';
-        result.innerHTML = '';
+        hideAll();
+        formContainer.style.display = "block";
     }
-    const updateForm = document.getElementById('updateForm');
-    const updateResult = document.getElementById('updateResult');
-    const updateContainer = document.getElementById('updateContainer');
-
     function showUpdateForm() {
-        updateContainer.style.display = 'block';
-        formContainer.style.display = 'none';
-        tableContainer.style.display = 'none';
-        updateResult.innerHTML = '';
+        hideAll();
+        updateContainer.style.display = "block";
     }
 
+    // --- Обновляем день недели при выборе даты в создании ---
+    const visitDateInput = document.getElementById("visitDate");
+    const visitDayOutput = document.getElementById("visitDay");
+    const visitTimeSelect = document.getElementById("visitTime");
+
+    visitDateInput.addEventListener("change", async () => {
+        const date = visitDateInput.value;
+        if (date) {
+            visitDayOutput.textContent = "День недели: " + getRussianDayOfWeek(date);
+            await updateTimeOptions(date, visitTimeSelect);
+        } else {
+            visitDayOutput.textContent = "";
+            resetTimeOptions(visitTimeSelect);
+        }
+    });
+
+    // --- Обновляем день недели при выборе даты в обновлении ---
+    const updateVisitDateInput = document.getElementById("updateVisitDate");
+    const updateVisitDayOutput = document.getElementById("updateVisitDay");
+    const updateVisitTimeSelect = document.getElementById("updateVisitTime");
+
+    updateVisitDateInput.addEventListener("change", async () => {
+        const date = updateVisitDateInput.value;
+        if (date) {
+            updateVisitDayOutput.textContent = "День недели: " + getRussianDayOfWeek(date);
+            await updateTimeOptions(date, updateVisitTimeSelect);
+        } else {
+            updateVisitDayOutput.textContent = "";
+            resetTimeOptions(updateVisitTimeSelect);
+        }
+    });
+
+    // --- Обновляем варианты времени с учетом занятости ---
+    async function updateTimeOptions(date, selectElement) {
+        // Сбрасываем текст и дизейбл для всех опций кроме первой
+        resetTimeOptions(selectElement);
+        try {
+            const response = await fetch(`/client/taken-times?date=${date}`);
+            if (!response.ok) throw new Error("Ошибка при загрузке занятых времён");
+            const takenTimes = await response.json(); // массив строк времени в формате "HH:mm"
+            // Блокируем занятые слоты
+            Array.from(selectElement.options).forEach((opt) => {
+                if (takenTimes.includes(opt.value)) {
+                    opt.disabled = true;
+                    opt.textContent = `${opt.value} (занято)`;
+                }
+            });
+        } catch (err) {
+            console.error(err);
+            alert("Не удалось проверить занятость времени");
+        }
+    }
+    function resetTimeOptions(selectElement) {
+        Array.from(selectElement.options).forEach((opt) => {
+            if (opt.value !== "") {
+                opt.disabled = false;
+                opt.textContent = opt.value;
+            }
+        });
+    }
+
+    // --- Поиск по имени ---
     async function searchByName() {
-        const name = document.getElementById('searchName').value.trim();
-        if (!name) return alert('Введите имя для поиска');
-        formContainer.style.display = 'none';
-        updateContainer.style.display = 'none';
-        tableContainer.style.display = 'block';
-        tableBody.innerHTML = '';
+        const name = document.getElementById("searchName").value.trim();
+        if (!name) return alert("Введите имя для поиска");
+        hideAll();
+        tableContainer.style.display = "block";
+        tableBody.innerHTML = "";
 
         try {
             const response = await fetch(`/client/getByName?name=${encodeURIComponent(name)}`);
-            if (!response.ok) throw new Error('Ошибка поиска по имени');
+            if (!response.ok) throw new Error("Ошибка поиска по имени");
             const clients = await response.json();
 
             if (!clients.length) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Нет данных</td></tr>';
+                tableBody.innerHTML =
+                    '<tr><td colspan="7" class="text-center">Нет данных</td></tr>';
             } else {
-                clients.forEach(client => {
+                clients.forEach((client) => {
                     tableBody.innerHTML += `
-          <tr>
-            <td>${client.id ?? '-'}</td>
-            <td>${client.name ?? '-'}</td>
-            <td>${client.phoneNumber ?? '-'}</td>
-            <td>${client.dateOfVisit ?? '-'}</td>
-            <td>${client.data ?? '-'}</td>
-          </tr>`;
+                        <tr>
+                            <td>${client.id ?? "-"}</td>
+                            <td>${client.name ?? "-"}</td>
+                            <td>${client.phoneNumber ?? "-"}</td>
+                            <td>${client.visitDate ?? "-"}</td>
+                            <td>${client.visitTime ?? "-"}</td>
+                            <td>${client.dayOfVisit ?? "-"}</td>
+                            <td>${client.data ?? "-"}</td>
+                        </tr>`;
                 });
             }
         } catch (err) {
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-danger">Ошибка: ${err.message}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-danger">Ошибка: ${err.message}</td></tr>`;
         }
     }
 
+    // --- Поиск по телефону ---
     async function searchByPhone() {
-        const phone = document.getElementById('searchPhone').value.trim();
-        if (!phone) return alert('Введите телефон для поиска');
-        formContainer.style.display = 'none';
-        updateContainer.style.display = 'none';
-        tableContainer.style.display = 'block';
-        tableBody.innerHTML = '';
-
-        try {
-            const response = await fetch(`/client/getByPhoneNumber?phoneNumber=${encodeURIComponent(phone)}`);
-            if (!response.ok) throw new Error('Ошибка поиска по телефону');
-            const clients = await response.json();
-
-            if (!clients.length) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Нет данных</td></tr>';
-            } else {
-                clients.forEach(client => {
-                    tableBody.innerHTML += `
-          <tr>
-            <td>${client.id ?? '-'}</td>
-            <td>${client.name ?? '-'}</td>
-            <td>${client.phoneNumber ?? '-'}</td>
-            <td>${client.dateOfVisit ?? '-'}</td>
-            <td>${client.data ?? '-'}</td>
-          </tr>`;
-                });
-            }
-        } catch (err) {
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-danger">Ошибка: ${err.message}</td></tr>`;
-        }
-    }
-
-    updateForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const id = document.getElementById('updateId').value.trim();
-        if (!id) return alert('Введите ID клиента');
-
-        const updateData = {};
-        const name = document.getElementById('updateName').value.trim();
-        const phoneNumber = document.getElementById('updatePhoneNumber').value.trim();
-        const data = document.getElementById('updateData').value.trim();
-
-        if (name) updateData.name = name;
-        if (phoneNumber) updateData.phoneNumber = phoneNumber;
-        if (data) updateData.data = data;
-
-        try {
-            const response = await fetch(`/client/update?id=${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updateData),
-            });
-            if (!response.ok) throw new Error(await response.text());
-
-            const updatedClient = await response.json();
-            updateResult.innerHTML = `<div class="alert alert-success">Клиент обновлён! ID: ${updatedClient.id}</div>`;
-            updateForm.reset();
-        } catch (error) {
-            updateResult.innerHTML = `<div class="alert alert-danger">Ошибка: ${error.message}</div>`;
-        }
-    });
-
-    async function loadClients() {
-        formContainer.style.display = 'none';
-        tableContainer.style.display = 'block';
-        tableBody.innerHTML = '';
-
-        try {
-            const response = await fetch('/client/getAll');
-            if (!response.ok) throw new Error('Ошибка загрузки');
-
-            const clients = await response.json();
-            if (!clients.length) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Нет данных</td></tr>';
-            } else {
-                clients.forEach(client => {
-                    tableBody.innerHTML += `
-            <tr>
-              <td>${client.id ?? '-'}</td>
-              <td>${client.name ?? '-'}</td>
-              <td>${client.phoneNumber ?? '-'}</td>
-              <td>${client.dateOfVisit ?? '-'}</td>
-              <td>${client.data ?? '-'}</td>
-            </tr>`;
-                });
-            }
-        } catch (err) {
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-danger">Ошибка: ${err.message}</td></tr>`;
-        }
-    }
-
-    formContainer.style.display = 'none';
-    updateContainer.style.display = 'none';
-    tableContainer.style.display = 'none';
-    result.innerHTML = '';
-    updateResult.innerHTML = '';
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById('name').value.trim();
-        const phoneNumber = document.getElementById('phoneNumber').value.trim();
-        const data = document.getElementById('data').value.trim();
-
-        const body = { name, phoneNumber, data };
-
-        try {
-            const response = await fetch('/client/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
-            if (!response.ok) throw new Error(await response.text());
-
-            const resultData = await response.json();
-            result.innerHTML = `<div class="alert alert-success">Клиент создан! ID: ${resultData.id}</div>`;
-            form.reset();
-        } catch (error) {
-            result.innerHTML = `<div class="alert alert-danger">Ошибка: ${error.message}</div>`;
-        }
-    });
-    function hideAll() {
-        formContainer.style.display = 'none';
-        updateContainer.style.display = 'none';
-        tableContainer.style.display = 'none';
-        result.innerHTML = '';
-        updateResult.innerHTML = '';
-    }
-
-    function showForm() {
+        const phone = document.getElementById("searchPhone").value.trim();
+        if (!phone) return alert("Введите телефон для поиска");
         hideAll();
-        formContainer.style.display = 'block';
+        tableContainer.style.display = "block";
+        tableBody.innerHTML = "";
+
+        try {
+            const response = await fetch(
+                `/client/getByPhoneNumber?phoneNumber=${encodeURIComponent(phone)}`
+            );
+            if (!response.ok) throw new Error("Ошибка поиска по телефону");
+            const clients = await response.json();
+
+            if (!clients.length) {
+                tableBody.innerHTML =
+                    '<tr><td colspan="7" class="text-center">Нет данных</td></tr>';
+            } else {
+                clients.forEach((client) => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${client.id ?? "-"}</td>
+                            <td>${client.name ?? "-"}</td>
+                            <td>${client.phoneNumber ?? "-"}</td>
+                            <td>${client.visitDate ?? "-"}</td>
+                            <td>${client.visitTime ?? "-"}</td>
+                            <td>${client.dayOfVisit ?? "-"}</td>
+                            <td>${client.data ?? "-"}</td>
+                        </tr>`;
+                });
+            }
+        } catch (err) {
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-danger">Ошибка: ${err.message}</td></tr>`;
+        }
     }
 
-</script>
+    // --- Загрузка всех клиентов ---
+    async function loadClients() {
+        hideAll();
+        tableContainer.style.display = "block";
+        tableBody.innerHTML = "";
 
+        try {
+            const response = await fetch("/client/getAll");
+            if (!response.ok) throw new Error("Ошибка загрузки");
+
+            const clients = await response.json();
+            if (!clients.length) {
+                tableBody.innerHTML =
+                    '<tr><td colspan="7" class="text-center">Нет данных</td></tr>';
+            } else {
+                clients.forEach((client) => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${client.id ?? "-"}</td>
+                            <td>${client.name ?? "-"}</td>
+                            <td>${client.phoneNumber ?? "-"}</td>
+                            <td>${client.visitDate ?? "-"}</td>
+                            <td>${client.visitTime ?? "-"}</td>
+                            <td>${client.dayOfVisit ?? "-"}</td>
+                            <td>${client.data ?? "-"}</td>
+                        </tr>`;
+                });
+            }
+        } catch (err) {
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-danger">Ошибка: ${err.message}</td></tr>`;
+        }
+    }
+
+    // --- Создание клиента ---
+    const formContainer = document.getElementById("formContainer");
+    const updateContainer = document.getElementById("updateContainer");
+    const tableContainer = document.getElementById("tableContainer");
+    const result = document.getElementById("result");
+    const updateResult = document.getElementById("updateResult");
+    const tableBody = document.getElementById("clientTableBody");
+
+    const clientForm = document.getElementById("clientForm");
+    clientForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Валидация времени (должно быть выбрано)
+        if (!visitTimeSelect.value) {
+            alert("Пожалуйста, выберите время визита.");
+            return;
+        }
+
+        // Проверка занятости времени перед отправкой
+        const date = visitDateInput.value;
+        const time = visitTimeSelect.value;
+
+        const takenTimes = await fetch(`/client/taken-times?date=${date}`)
+            .then((res) => res.json())
+            .catch(() => []);
+
+        if (takenTimes.includes(time)) {
+            alert("Выбранное время занято, пожалуйста выберите другое.");
+            return;
+        }
+
+        // Формируем тело запроса
+        const payload = {
+            name: document.getElementById("name").value.trim(),
+            phoneNumber: document.getElementById("phoneNumber").value.trim(),
+            visitDate: date,
+            visitTime: time,
+            data: document.getElementById("data").value.trim(),
+        };
+
+        try {
+            const response = await fetch("/client/save", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (response.ok) {
+                result.innerHTML =
+                    '<div class="alert alert-success">Клиент успешно создан!</div>';
+                clientForm.reset();
+                visitDayOutput.textContent = "";
+                await loadClients();
+            } else {
+                const err = await response.text();
+                result.innerHTML = `<div class="alert alert-danger">Ошибка: ${err}</div>`;
+            }
+        } catch (err) {
+            result.innerHTML = `<div class="alert alert-danger">Ошибка: ${err.message}</div>`;
+        }
+    });
+
+    // --- Обновление клиента ---
+    const updateForm = document.getElementById("updateForm");
+    updateForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById("updateId").value.trim();
+        if (!id) {
+            alert("Введите ID клиента для обновления");
+            return;
+        }
+
+        // Если выбрана дата, время тоже должно быть выбрано
+        const date = updateVisitDateInput.value;
+        const time = updateVisitTimeSelect.value;
+        if (date && !time) {
+            alert("Пожалуйста, выберите время визита.");
+            return;
+        }
+
+        // Проверка занятости времени при изменении даты и времени
+        if (date && time) {
+            const takenTimes = await fetch(`/client/taken-times?date=${date}`)
+                .then((res) => res.json())
+                .catch(() => []);
+
+            // Чтобы разрешить обновление на то же время у того же клиента, лучше проверить по API,
+            // но сейчас просто запретим, если занято у другого
+            if (takenTimes.includes(time)) {
+                alert("Выбранное время занято, пожалуйста выберите другое.");
+                return;
+            }
+        }
+
+        // Формируем объект для обновления — отправляем только заполненные поля
+        const updatePayload = { id: Number(id) };
+        const nameVal = document.getElementById("updateName").value.trim();
+        if (nameVal) updatePayload.name = nameVal;
+        const phoneVal = document.getElementById("updatePhoneNumber").value.trim();
+        if (phoneVal) updatePayload.phoneNumber = phoneVal;
+        if (date) updatePayload.visitDate = date;
+        if (time) updatePayload.visitTime = time;
+        const dataVal = document.getElementById("updateData").value.trim();
+        if (dataVal) updatePayload.data = dataVal;
+
+        try {
+            const response = await fetch(`/client/update/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatePayload),
+            });
+
+            if (response.ok) {
+                updateResult.innerHTML =
+                    '<div class="alert alert-success">Клиент успешно обновлен!</div>';
+                updateForm.reset();
+                updateVisitDayOutput.textContent = "";
+                await loadClients();
+            } else {
+                const err = await response.text();
+                updateResult.innerHTML = `<div class="alert alert-danger">Ошибка: ${err}</div>`;
+            }
+        } catch (err) {
+            updateResult.innerHTML = `<div class="alert alert-danger">Ошибка: ${err.message}</div>`;
+        }
+    });
+    async function deleteClient(id) {
+        if (!confirm("Вы уверены, что хотите удалить клиента?")) return;
+
+        try {
+            const response = await fetch(`/client/delete?id=${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error("Не удалось удалить клиента");
+            alert("Клиент удалён");
+            await loadClients();
+        } catch (err) {
+            alert("Ошибка удаления: " + err.message);
+        }
+    }
+
+    // Функция загрузки клиентов с обновлённой таблицей (с кнопкой Удалить)
+    async function loadClients() {
+        hideAll();
+        tableContainer.style.display = "block";
+        tableBody.innerHTML = "";
+
+        try {
+            const response = await fetch("/client/getAll");
+            if (!response.ok) throw new Error("Ошибка загрузки");
+
+            const clients = await response.json();
+            if (!clients.length) {
+                tableBody.innerHTML =
+                    '<tr><td colspan="9" class="text-center">Нет данных</td></tr>';
+            } else {
+                clients.forEach((client) => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${client.id ?? "-"}</td>
+                            <td>${client.name ?? "-"}</td>
+                            <td>${client.phoneNumber ?? "-"}</td>
+                            <td>${client.visitDate ?? "-"}</td>
+                            <td>${client.visitTime ?? "-"}</td>
+                            <td>${client.dayOfVisit ?? "-"}</td>
+                            <td>${client.data ?? "-"}</td>
+                            <td>${client.dateOfRegister ?? "-"}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteClient(${client.id})">
+                                    <i class="fas fa-trash"></i> Удалить
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }
+        } catch (err) {
+            tableBody.innerHTML = `<tr><td colspan="9" class="text-danger">Ошибка: ${err.message}</td></tr>`;
+        }
+    }
+
+    // --- Инициализация ---
+    hideAll();
+</script>
 </body>
 </html>

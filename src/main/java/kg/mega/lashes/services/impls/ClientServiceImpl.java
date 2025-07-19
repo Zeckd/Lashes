@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,8 +27,17 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client create(ClientCreateDto clientCreateDto) {
+        LocalDate visitDate = clientCreateDto.visitDate();
+        LocalTime visitTime = clientCreateDto.visitTime();
+
+        if (clientRepo.existsByVisitDateAndVisitTime(visitDate, visitTime)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Это время уже занято на выбранную дату");
+        }
         Client client = ClientMapper.INSTANCE.clientCreateDtoToClient(clientCreateDto);
-        client.setDateOfVisit(LocalDate.now());
+        client.setVisitDate(visitDate);
+        client.setVisitTime(visitTime);
+        client.setDayOfVisit(convertToRussian(visitDate.getDayOfWeek()));
+        client.setDateOfRegister(LocalDate.now());
         return clientRepo.save(client);
     }
 
@@ -50,8 +61,21 @@ public class ClientServiceImpl implements ClientService {
         if (clientUpdateDto.comment() != null && !clientUpdateDto.comment().isEmpty()) {
             client.setData(clientUpdateDto.comment());
         }
+        LocalDate visitDate = clientUpdateDto.visitDate();
+        LocalTime visitTime = clientUpdateDto.visitTime();
 
-        client.setDateOfVisit(LocalDate.now());
+        if (clientRepo.existsByVisitDateAndVisitTime(visitDate, visitTime)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Это время уже занято на выбранную дату");
+        }
+        if (clientUpdateDto.visitDate() != null) {
+            client.setVisitDate(clientUpdateDto.visitDate());
+            client.setDayOfVisit(convertToRussian(visitDate.getDayOfWeek()));
+        }
+
+        if (clientUpdateDto.visitTime() != null) {
+            client.setVisitTime(clientUpdateDto.visitTime());
+        }
+
 
         return clientRepo.save(client);
     }
@@ -71,6 +95,31 @@ public class ClientServiceImpl implements ClientService {
         return clients;
 
     }
+
+    @Override
+    public Client delete(Long id) {
+        Client clientId = clientRepo.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND));
+        clientRepo.delete(clientId);
+        return clientId;
+    }
+    private String convertToRussian(DayOfWeek day) {
+        return switch (day) {
+            case MONDAY -> "Понедельник";
+            case TUESDAY -> "Вторник";
+            case WEDNESDAY -> "Среда";
+            case THURSDAY -> "Четверг";
+            case FRIDAY -> "Пятница";
+            case SATURDAY -> "Суббота";
+            case SUNDAY -> "Воскресенье";
+        };
+    }
+    public List<LocalTime> getTakenTimesByDate(LocalDate date) {
+        return clientRepo.findAllByVisitDate(date).stream()
+                .map(Client::getVisitTime)
+                .toList();
+    }
+
 
 
 }

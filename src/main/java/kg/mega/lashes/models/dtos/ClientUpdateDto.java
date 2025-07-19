@@ -17,9 +17,7 @@
                 )
                 @Schema(description = "Дополнительный номер телефона (только в формате +996)", example = "+996")
                 String phoneNumber,
-                @NotNull
                 LocalDate visitDate,
-                @NotNull
                 LocalTime visitTime,
                 @JsonProperty("data")
                  String comment

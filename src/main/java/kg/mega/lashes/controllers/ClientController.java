@@ -29,7 +29,7 @@ public class ClientController {
         return clientService.create(clientCreateDto);
     }
     @PutMapping("/update")
-    public Client updateClient(@Valid @RequestBody ClientUpdateDto clientUpdateDto, @RequestParam Long id) {
+    public Client updateClient(@Valid @RequestBody ClientUpdateDto clientUpdateDto, @PathVariable Long id) {
         return clientService.update(clientUpdateDto, id);
     }
     @GetMapping("/getAll")

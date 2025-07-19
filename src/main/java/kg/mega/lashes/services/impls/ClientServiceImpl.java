@@ -68,12 +68,12 @@ public class ClientServiceImpl implements ClientService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Это время уже занято на выбранную дату");
         }
         if (clientUpdateDto.visitDate() != null) {
-            client.setVisitDate(clientUpdateDto.visitDate());
+            client.setVisitDate(visitDate);
             client.setDayOfVisit(convertToRussian(visitDate.getDayOfWeek()));
         }
 
         if (clientUpdateDto.visitTime() != null) {
-            client.setVisitTime(clientUpdateDto.visitTime());
+            client.setVisitTime(visitTime);
         }
 
 

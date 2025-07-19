@@ -234,7 +234,7 @@
                         type="text"
                         class="form-control"
                         id="updatePhoneNumber"
-                        placeholder="Новый номер телефона"
+                        placeholder="Новый номер телефона (+996*********)"
                 />
             </div>
             <div class="mb-3">
@@ -356,7 +356,10 @@
             updateVisitDayOutput.textContent = "";
             resetTimeOptions(updateVisitTimeSelect);
         }
+
     });
+
+
 
     // --- Обновляем варианты времени с учетом занятости ---
     async function updateTimeOptions(date, selectElement) {
@@ -513,9 +516,18 @@
             return;
         }
 
+
         // Проверка занятости времени перед отправкой
         const date = visitDateInput.value;
         const time = visitTimeSelect.value;
+        const selectedDate = new Date(date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate < today) {
+            alert("Дата визита не может быть в прошлом.");
+            return;
+        }
 
         const takenTimes = await fetch(`/client/taken-times?date=${date}`)
             .then((res) => res.json())
@@ -551,8 +563,18 @@
                 visitDayOutput.textContent = "";
                 await loadClients();
             } else {
-                const err = await response.text();
-                result.innerHTML = `<div class="alert alert-danger">Ошибка: ${err}</div>`;
+                if (response.status === 409) {
+                    // При ошибке 409 получаем json с сообщением и показываем alert
+                    try {
+                        const errJson = await response.json();
+                        alert(errJson.message || "Выбранное время занято, пожалуйста выберите другое.");
+                    } catch {
+                        alert("Выбранное время занято, пожалуйста выберите другое.");
+                    }
+                } else {
+                    const err = await response.text();
+                    result.innerHTML = `<div class="alert alert-danger">Ошибка: ${err}</div>`;
+                }
             }
         } catch (err) {
             result.innerHTML = `<div class="alert alert-danger">Ошибка: ${err.message}</div>`;

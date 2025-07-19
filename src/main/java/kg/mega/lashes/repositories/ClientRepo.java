@@ -13,4 +13,6 @@ public interface ClientRepo extends JpaRepository<Client, Long> {
     boolean existsByVisitDateAndVisitTime(LocalDate visitDate, LocalTime visitTime);
 
     List<Client> findAllByVisitDate(LocalDate visitDate);
+    boolean existsByVisitDateAndVisitTimeAndIdNot(LocalDate visitDate, LocalTime visitTime, Long id);
+
 }

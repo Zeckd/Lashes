@@ -64,7 +64,8 @@ public class ClientServiceImpl implements ClientService {
         LocalDate visitDate = clientUpdateDto.visitDate();
         LocalTime visitTime = clientUpdateDto.visitTime();
 
-        if (clientRepo.existsByVisitDateAndVisitTime(visitDate, visitTime)) {
+        if (visitDate != null && visitTime != null &&
+                clientRepo.existsByVisitDateAndVisitTimeAndIdNot(visitDate, visitTime, id)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Это время уже занято на выбранную дату");
         }
         if (clientUpdateDto.visitDate() != null) {

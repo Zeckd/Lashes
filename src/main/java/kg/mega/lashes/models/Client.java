@@ -59,7 +59,7 @@ public class Client {
         this.remove = remove;
     }
 
-    public LocalDate setDateOfRegister() {
+    public LocalDate getDateOfRegister() {
         return dateOfRegister;
     }
 

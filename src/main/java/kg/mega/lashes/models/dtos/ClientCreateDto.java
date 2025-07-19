@@ -3,6 +3,7 @@ package kg.mega.lashes.models.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
@@ -16,9 +17,9 @@ public record ClientCreateDto (
         )
         @Schema(description = "Дополнительный номер телефона (только в формате +996)", example = "+996")
         String phoneNumber,
-        @NotBlank(message = "Дата обязательно!")
+        @NotNull(message = "Дата обязательно!")
         LocalDate visitDate,
-        @NotBlank(message = "Время обязательно!")
+        @NotNull(message = "Время обязательно!")
         LocalTime visitTime,
         @JsonProperty("data")
          String comment

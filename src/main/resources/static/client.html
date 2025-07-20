@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8" />
     <title>Управление клиентами</title>
     <link
@@ -101,6 +102,32 @@
             font-size: 0.9rem;
             color: #0ff;
         }
+        @media (max-width: 576px) {
+            h2 {
+                font-size: 1.5rem;
+            }
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.6rem;
+            }
+            .form-control {
+                font-size: 0.9rem;
+            }
+            .card {
+                padding: 1rem !important;
+            }
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .table th,
+            .table td {
+                white-space: nowrap;
+                font-size: 0.8rem;
+                padding: 0.4rem;
+            }
+
+        }
     </style>
 </head>
 <body>
@@ -124,7 +151,7 @@
 
     <!-- Поисковые строки -->
     <div class="row mb-4">
-        <div class="col-md-6 mb-3">
+        <div class="col-12 col-md-6 mb-3">
             <input
                     type="text"
                     id="searchName"
@@ -132,7 +159,7 @@
                     placeholder="Поиск клиента по имени (Например: Анна)"
             />
         </div>
-        <div class="col-md-6 mb-3">
+        <div class="col-12 col-md-6 mb-3">
             <input
                     type="text"
                     id="searchPhone"
@@ -140,7 +167,7 @@
                     placeholder="Поиск клиента по телефону (Пример: +996700111111)"
             />
         </div>
-        <div class="col-12 text-center">
+        <div class="col-12 text-center text-start">
             <button class="btn btn-neon me-2" onclick="searchByName()">
                 <i class="fas fa-search"></i> Найти по имени
             </button>
@@ -275,21 +302,23 @@
     <!-- Таблица клиентов -->
     <div id="tableContainer" class="card p-4 shadow" style="display:none;">
         <h5><i class="fas fa-table me-2"></i>Список клиентов</h5>
-        <table class="table table-bordered table-striped mt-3">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Имя</th>
-                <th>Телефон</th>
-                <th>Дата регистрации</th>
-                <th>Дата визита</th>
-                <th>Время визита</th>
-                <th>День недели</th>
-                <th>Комментарий</th>
-            </tr>
-            </thead>
-            <tbody id="clientTableBody"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped mt-3">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Имя</th>
+                    <th>Телефон</th>
+                    <th>Дата регистрации</th>
+                    <th>Дата визита</th>
+                    <th>Время визита</th>
+                    <th>День недели</th>
+                    <th>Комментарий</th>
+                </tr>
+                </thead>
+                <tbody id="clientTableBody"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 

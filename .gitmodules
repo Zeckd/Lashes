@@ -1,0 +1,3 @@
+[submodule "lashes"]
+	path = lashes
+	url = https://github.com/Zeckd/Lashes.git

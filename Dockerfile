@@ -1,28 +1,28 @@
-# Use OpenJDK 17 as base image
-FROM openjdk:17-jdk-slim
-
-# Set working directory
+# Этап сборки
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Install necessary packages
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Скопировать pom.xml и подкачать зависимости
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Copy the JAR file
-COPY target/*.jar app.jar
+# Скопировать весь проект (а не только src!)
+COPY . .
 
-# Create non-root user for security
+# Собрать jar
+RUN mvn clean package -DskipTests
+
+# Этап запуска
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+
+# Скопировать jar из предыдущего этапа
+COPY --from=build /app/target/*.jar app.jar
+
+# Создать пользователя
 RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8080/actuator/health || exit 1
-
-# Run the application
 CMD ["java", "-jar", "app.jar"]

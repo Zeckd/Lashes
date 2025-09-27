@@ -343,7 +343,7 @@
                 if (confirmPassword.value && password.value !== confirmPassword.value) {
                     this.setFieldValidation(confirmPassword, false, 'Пароли не совпадают');
                     return false;
-                } else if (confirmPassword.value) {
+                } else if (confirmPassword.value && password.value === confirmPassword.value) {
                     this.setFieldValidation(confirmPassword, true, '');
                 }
                 return true;

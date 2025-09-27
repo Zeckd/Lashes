@@ -36,6 +36,13 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistrationDto registrationDto) {
         try {
+            // Проверяем совпадение паролей
+            if (!registrationDto.getPassword().equals(registrationDto.getConfirmPassword())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Пароли не совпадают");
+                return ResponseEntity.badRequest().body(error);
+            }
+            
             User user = userService.registerUser(registrationDto);
             
             // Автоматически аутентифицируем пользователя после регистрации

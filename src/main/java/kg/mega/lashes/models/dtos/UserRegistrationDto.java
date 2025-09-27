@@ -17,6 +17,9 @@ public class UserRegistrationDto {
     @Size(min = 6, message = "Пароль должен содержать минимум 6 символов")
     private String password;
 
+    @NotBlank(message = "Подтверждение пароля обязательно")
+    private String confirmPassword;
+
     private String phoneNumber;
 
     private Boolean rememberMe = false;
@@ -44,6 +47,14 @@ public class UserRegistrationDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
     public String getPhoneNumber() {

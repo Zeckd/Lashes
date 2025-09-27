@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,5 +72,17 @@ public class UserService implements UserDetailsService {
 
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    public boolean hasAnyAdmin() {
+        return userRepository.existsByRole(User.Role.ADMIN);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 }

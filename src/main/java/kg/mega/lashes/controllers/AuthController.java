@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -97,6 +98,119 @@ public class AuthController {
         
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(createUserResponse(user));
+    }
+
+    @PostMapping("/create-admin")
+    public ResponseEntity<?> createAdmin(@Valid @RequestBody UserRegistrationDto registrationDto) {
+        try {
+            // Проверяем, есть ли уже админы в системе
+            if (userService.hasAnyAdmin()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Администратор уже существует"));
+            }
+            
+            User user = userService.registerUser(registrationDto);
+            // Устанавливаем роль админа
+            user.setRole(User.Role.ADMIN);
+            user = userService.save(user);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("user", createUserResponse(user));
+            response.put("message", "Администратор успешно создан");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getAllUsers(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Не авторизован"));
+        }
+        
+        User currentUser = (User) authentication.getPrincipal();
+        if (currentUser.getRole() != User.Role.ADMIN) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Доступ запрещен"));
+        }
+        
+        List<Map<String, Object>> users = userService.getAllUsers().stream()
+                .map(this::createUserResponse)
+                .collect(java.util.stream.Collectors.toList());
+        
+        return ResponseEntity.ok(users);
+    }
+
+    @PutMapping("/users/{userId}/role")
+    public ResponseEntity<?> changeUserRole(@PathVariable Long userId, 
+                                          @RequestBody Map<String, String> roleRequest,
+                                          Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Не авторизован"));
+        }
+        
+        User currentUser = (User) authentication.getPrincipal();
+        if (currentUser.getRole() != User.Role.ADMIN) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Доступ запрещен"));
+        }
+        
+        try {
+            String newRole = roleRequest.get("role");
+            if (newRole == null || (!newRole.equals("USER") && !newRole.equals("ADMIN"))) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Некорректная роль"));
+            }
+            
+            User user = userService.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+            
+            user.setRole(User.Role.valueOf(newRole));
+            user = userService.save(user);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("user", createUserResponse(user));
+            response.put("message", "Роль пользователя успешно изменена");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Не авторизован"));
+        }
+        
+        User currentUser = (User) authentication.getPrincipal();
+        if (currentUser.getRole() != User.Role.ADMIN) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Доступ запрещен"));
+        }
+        
+        try {
+            User user = userService.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+            
+            // Нельзя удалить самого себя
+            if (user.getId().equals(currentUser.getId())) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Нельзя удалить самого себя"));
+            }
+            
+            userService.deleteUser(userId);
+            
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Пользователь успешно удален");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
 
     private Map<String, Object> createUserResponse(User user) {

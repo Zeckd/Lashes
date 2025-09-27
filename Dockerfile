@@ -2,15 +2,11 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Скопировать pom.xml и подкачать зависимости
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Скопировать весь проект (а не только src!)
+# Скопировать проект
 COPY . .
 
-# Собрать jar
-RUN mvn clean package -DskipTests
+# Собрать jar с принудительным обновлением зависимостей
+RUN mvn clean package -DskipTests -U
 
 # Этап запуска
 FROM eclipse-temurin:17-jre-jammy

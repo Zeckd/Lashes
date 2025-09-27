@@ -125,6 +125,51 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/reset-admin-password")
+    public ResponseEntity<?> resetAdminPassword() {
+        try {
+            User admin = userService.findByEmail("iskenpubg@gmail.com")
+                    .orElseThrow(() -> new RuntimeException("Админ не найден"));
+            
+            // Сбрасываем пароль на дефолтный
+            admin.setPassword(userService.encodePassword("isken1234-"));
+            userService.save(admin);
+            
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Пароль админа сброшен на: isken1234-");
+            response.put("email", "iskenpubg@gmail.com");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @GetMapping("/check-admin")
+    public ResponseEntity<?> checkAdmin() {
+        try {
+            User admin = userService.findByEmail("iskenpubg@gmail.com").orElse(null);
+            
+            Map<String, Object> response = new HashMap<>();
+            if (admin != null) {
+                response.put("exists", true);
+                response.put("user", createUserResponse(admin));
+                response.put("message", "Админ найден");
+            } else {
+                response.put("exists", false);
+                response.put("message", "Админ не найден");
+            }
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {

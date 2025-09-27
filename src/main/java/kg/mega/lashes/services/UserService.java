@@ -50,16 +50,31 @@ public class UserService implements UserDetailsService {
     }
 
     public User authenticateUser(UserLoginDto loginDto) {
+        System.out.println("🔍 Попытка входа для email: " + loginDto.getEmail());
+        
         User user = userRepository.findByEmail(loginDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Неверный email или пароль"));
+                .orElseThrow(() -> {
+                    System.out.println("❌ Пользователь не найден: " + loginDto.getEmail());
+                    return new RuntimeException("Неверный email или пароль");
+                });
 
-        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+        System.out.println("✅ Пользователь найден: " + user.getName() + " (ID: " + user.getId() + ")");
+        System.out.println("🔐 Роль пользователя: " + user.getRole());
+        
+        boolean passwordMatches = passwordEncoder.matches(loginDto.getPassword(), user.getPassword());
+        System.out.println("🔑 Проверка пароля: " + (passwordMatches ? "✅ Совпадает" : "❌ Не совпадает"));
+        
+        if (!passwordMatches) {
+            System.out.println("❌ Неверный пароль для пользователя: " + loginDto.getEmail());
             throw new RuntimeException("Неверный email или пароль");
         }
 
         user.setLastLogin(LocalDateTime.now());
         user.setRememberMe(loginDto.getRememberMe());
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        System.out.println("✅ Пользователь успешно аутентифицирован: " + savedUser.getEmail());
+        
+        return savedUser;
     }
 
     public Optional<User> findById(Long id) {
@@ -84,5 +99,9 @@ public class UserService implements UserDetailsService {
 
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    public String encodePassword(String password) {
+        return passwordEncoder.encode(password);
     }
 }

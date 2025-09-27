@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Lashes Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b9d;
+            --secondary-color: #c44569;
+            --accent-color: #f8b500;
+            --dark-color: #2c2c54;
+            --light-color: #f8f9fa;
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-color);
+            min-height: 100vh;
+        }
+
+        .navbar-custom {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255, 107, 157, 0.1);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .main-container {
+            padding: 40px 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .stats-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: var(--gradient);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            border: none;
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            border: none;
+            font-weight: 600;
+            color: var(--dark-color);
+            padding: 15px;
+        }
+
+        .table td {
+            border: none;
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(255, 107, 157, 0.05);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-scheduled {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .status-completed {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+        }
+
+        .status-cancelled {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .btn-custom {
+            background: var(--gradient);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            color: white;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+            color: white;
+        }
+
+        .btn-danger-custom {
+            background: #dc3545;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            color: white;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .btn-danger-custom:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: #28a745;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            color: white;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .btn-success-custom:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 157, 0.25);
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: inline-block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .main-container {
+                padding: 20px 0;
+            }
+            
+            .table-responsive {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-eye"></i> Lashes Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="loadAllAppointments()">
+                            <i class="fas fa-calendar me-1"></i>Все записи
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="loadStatistics()">
+                            <i class="fas fa-chart-bar me-1"></i>Статистика
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i>Выход
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Админ-панель</h1>
+                <p class="page-subtitle">Управление записями и статистика</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4" id="statsSection">
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card text-center">
+                        <div class="stats-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stats-number" id="totalAppointments">-</div>
+                        <div class="stats-label">Всего записей</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card text-center">
+                        <div class="stats-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stats-number" id="scheduledAppointments">-</div>
+                        <div class="stats-label">Запланировано</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card text-center">
+                        <div class="stats-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stats-number" id="completedAppointments">-</div>
+                        <div class="stats-label">Выполнено</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card text-center">
+                        <div class="stats-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stats-number" id="cancelledAppointments">-</div>
+                        <div class="stats-label">Отменено</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-section">
+                <div class="row align-items-end">
+                    <div class="col-md-4 mb-3">
+                        <label for="filterDate" class="form-label">Фильтр по дате</label>
+                        <input type="date" class="form-control" id="filterDate">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="filterStatus" class="form-label">Фильтр по статусу</label>
+                        <select class="form-control" id="filterStatus">
+                            <option value="">Все статусы</option>
+                            <option value="SCHEDULED">Запланировано</option>
+                            <option value="COMPLETED">Выполнено</option>
+                            <option value="CANCELLED">Отменено</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button class="btn btn-custom w-100" onclick="applyFilters()">
+                            <i class="fas fa-filter me-2"></i>Применить фильтры
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-list me-2"></i>Записи
+                    </h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Клиент</th>
+                                    <th>Телефон</th>
+                                    <th>Дата</th>
+                                    <th>Время</th>
+                                    <th>Статус</th>
+                                    <th>Комментарии</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentsTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center">
+                                        <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                                        <p class="mt-2 text-muted">Загрузка записей...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class AdminManager {
+            constructor() {
+                this.token = localStorage.getItem('token');
+                this.user = JSON.parse(localStorage.getItem('user') || '{}');
+                this.init();
+            }
+
+            init() {
+                if (!this.token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                // Check if user is admin
+                if (this.user.role !== 'ADMIN') {
+                    this.showAlert('У вас нет прав доступа к админ-панели', 'danger');
+                    setTimeout(() => {
+                        window.location.href = '/appointments';
+                    }, 2000);
+                    return;
+                }
+
+                this.loadStatistics();
+                this.loadAllAppointments();
+            }
+
+            async loadStatistics() {
+                try {
+                    const response = await fetch('/api/admin/appointments/statistics', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const stats = await response.json();
+                        this.displayStatistics(stats);
+                    } else if (response.status === 401) {
+                        this.logout();
+                    }
+                } catch (error) {
+                    console.error('Error loading statistics:', error);
+                }
+            }
+
+            displayStatistics(stats) {
+                document.getElementById('totalAppointments').textContent = stats.total;
+                document.getElementById('scheduledAppointments').textContent = stats.scheduled;
+                document.getElementById('completedAppointments').textContent = stats.completed;
+                document.getElementById('cancelledAppointments').textContent = stats.cancelled;
+            }
+
+            async loadAllAppointments() {
+                try {
+                    const response = await fetch('/api/admin/appointments', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const appointments = await response.json();
+                        this.displayAppointments(appointments);
+                    } else if (response.status === 401) {
+                        this.logout();
+                    } else {
+                        this.showAlert('Ошибка при загрузке записей', 'danger');
+                    }
+                } catch (error) {
+                    this.showAlert('Ошибка соединения с сервером', 'danger');
+                }
+            }
+
+            displayAppointments(appointments) {
+                const tbody = document.getElementById('appointmentsTableBody');
+                
+                if (appointments.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                <div class="empty-state">
+                                    <i class="fas fa-calendar-times"></i>
+                                    <h5>Записей не найдено</h5>
+                                    <p>Нет записей, соответствующих выбранным фильтрам</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                const appointmentsHtml = appointments.map(appointment => {
+                    const statusClass = this.getStatusClass(appointment.status);
+                    const statusText = this.getStatusText(appointment.status);
+                    
+                    return `
+                        <tr>
+                            <td>${appointment.id}</td>
+                            <td>${appointment.clientName}</td>
+                            <td>${appointment.clientPhone || '-'}</td>
+                            <td>${this.formatDate(appointment.appointmentDate)}</td>
+                            <td>${appointment.appointmentTime}</td>
+                            <td>
+                                <span class="status-badge ${statusClass}">
+                                    ${statusText}
+                                </span>
+                            </td>
+                            <td>${appointment.notes || '-'}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    ${appointment.status === 'SCHEDULED' ? 
+                                        `<button class="btn btn-success-custom btn-sm" onclick="updateStatus(${appointment.id}, 'COMPLETED')">
+                                            <i class="fas fa-check"></i>
+                                        </button>` : ''
+                                    }
+                                    ${appointment.status !== 'CANCELLED' ? 
+                                        `<button class="btn btn-danger-custom btn-sm" onclick="updateStatus(${appointment.id}, 'CANCELLED')">
+                                            <i class="fas fa-times"></i>
+                                        </button>` : ''
+                                    }
+                                    <button class="btn btn-danger-custom btn-sm" onclick="deleteAppointment(${appointment.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                tbody.innerHTML = appointmentsHtml;
+            }
+
+            getStatusClass(status) {
+                switch (status) {
+                    case 'SCHEDULED': return 'status-scheduled';
+                    case 'COMPLETED': return 'status-completed';
+                    case 'CANCELLED': return 'status-cancelled';
+                    default: return 'status-scheduled';
+                }
+            }
+
+            getStatusText(status) {
+                switch (status) {
+                    case 'SCHEDULED': return 'Запланировано';
+                    case 'COMPLETED': return 'Выполнено';
+                    case 'CANCELLED': return 'Отменено';
+                    default: return 'Запланировано';
+                }
+            }
+
+            async updateAppointmentStatus(id, status) {
+                try {
+                    const response = await fetch(`/api/admin/appointments/${id}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.token}`
+                        },
+                        body: JSON.stringify({ status })
+                    });
+
+                    if (response.ok) {
+                        this.showAlert('Статус записи обновлен', 'success');
+                        this.loadAllAppointments();
+                        this.loadStatistics();
+                    } else {
+                        const result = await response.json();
+                        this.showAlert(result.error || 'Ошибка при обновлении статуса', 'danger');
+                    }
+                } catch (error) {
+                    this.showAlert('Ошибка соединения с сервером', 'danger');
+                }
+            }
+
+            async deleteAppointment(id) {
+                if (!confirm('Вы уверены, что хотите удалить эту запись?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/admin/appointments/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        this.showAlert('Запись успешно удалена', 'success');
+                        this.loadAllAppointments();
+                        this.loadStatistics();
+                    } else {
+                        const result = await response.json();
+                        this.showAlert(result.error || 'Ошибка при удалении записи', 'danger');
+                    }
+                } catch (error) {
+                    this.showAlert('Ошибка соединения с сервером', 'danger');
+                }
+            }
+
+            async applyFilters() {
+                const date = document.getElementById('filterDate').value;
+                const status = document.getElementById('filterStatus').value;
+
+                try {
+                    let url = '/api/admin/appointments';
+                    if (date) {
+                        url = `/api/admin/appointments/date/${date}`;
+                    }
+
+                    const response = await fetch(url, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        let appointments = await response.json();
+                        
+                        // Filter by status on client side
+                        if (status) {
+                            appointments = appointments.filter(apt => apt.status === status);
+                        }
+                        
+                        this.displayAppointments(appointments);
+                    }
+                } catch (error) {
+                    this.showAlert('Ошибка при применении фильтров', 'danger');
+                }
+            }
+
+            showAlert(message, type) {
+                const container = document.getElementById('alertContainer');
+                container.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('ru-RU');
+            }
+
+            logout() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
+        }
+
+        // Global functions
+        function loadAllAppointments() {
+            window.adminManager.loadAllAppointments();
+        }
+
+        function loadStatistics() {
+            window.adminManager.loadStatistics();
+        }
+
+        function updateStatus(id, status) {
+            window.adminManager.updateAppointmentStatus(id, status);
+        }
+
+        function deleteAppointment(id) {
+            window.adminManager.deleteAppointment(id);
+        }
+
+        function applyFilters() {
+            window.adminManager.applyFilters();
+        }
+
+        function logout() {
+            window.adminManager.logout();
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.adminManager = new AdminManager();
+        });
+    </script>
+</body>
+</html>

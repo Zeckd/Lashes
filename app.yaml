@@ -1,0 +1,44 @@
+runtime: java17
+env: standard
+
+instance_class: F2
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.6
+  target_throughput_utilization: 0.6
+
+env_variables:
+  SPRING_PROFILES_ACTIVE: production
+  JWT_SECRET: "mySecretKeyForJWTTokenGeneration123456789"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+
+# Database configuration for Google Cloud SQL
+# Uncomment and configure these variables when using Cloud SQL
+# env_variables:
+#   SPRING_DATASOURCE_URL: "jdbc:postgresql://google/lashes?cloudSqlInstance=PROJECT_ID:REGION:INSTANCE_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
+#   SPRING_DATASOURCE_USERNAME: "postgres"
+#   SPRING_DATASOURCE_PASSWORD: "your_password"
+#   DB_NAME: "lashes"
+#   DB_INSTANCE_CONNECTION_NAME: "PROJECT_ID:REGION:INSTANCE_NAME"
+
+handlers:
+- url: /.*
+  script: auto
+  secure: always
+
+# Health check configuration
+readiness_check:
+  path: "/actuator/health"
+  check_interval_sec: 5
+  timeout_sec: 4
+  failure_threshold: 2
+  success_threshold: 2
+
+liveness_check:
+  path: "/actuator/health"
+  check_interval_sec: 30
+  timeout_sec: 4
+  failure_threshold: 4
+  success_threshold: 2

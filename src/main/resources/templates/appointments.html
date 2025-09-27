@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои записи - Lashes Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b9d;
+            --secondary-color: #c44569;
+            --accent-color: #f8b500;
+            --dark-color: #2c2c54;
+            --light-color: #f8f9fa;
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-color);
+            min-height: 100vh;
+        }
+
+        .navbar-custom {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255, 107, 157, 0.1);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .main-container {
+            padding: 40px 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: var(--gradient);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            border: none;
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 157, 0.25);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .invalid-feedback {
+            display: block;
+            font-size: 0.875rem;
+            color: #dc3545;
+            margin-top: 5px;
+        }
+
+        .btn-custom {
+            background: var(--gradient);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: #6c757d;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .appointment-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .appointment-date {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .appointment-time {
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .appointment-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-scheduled {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .status-completed {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+        }
+
+        .status-cancelled {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: inline-block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .time-slot {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary-color);
+            background: rgba(255, 107, 157, 0.05);
+        }
+
+        .time-slot.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .time-slot.disabled {
+            background: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .main-container {
+                padding: 20px 0;
+            }
+            
+            .time-slots {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-eye"></i> Lashes Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showCreateForm()">
+                            <i class="fas fa-plus me-1"></i>Новая запись
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="loadMyAppointments()">
+                            <i class="fas fa-calendar me-1"></i>Мои записи
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i>Выход
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Мои записи</h1>
+                <p class="page-subtitle">Управляйте своими записями на прием</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <!-- Create Appointment Form -->
+            <div class="card mb-4" id="createFormCard" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-calendar-plus me-2"></i>Новая запись
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form id="appointmentForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="clientName" class="form-label">Имя клиента *</label>
+                                <input type="text" class="form-control" id="clientName" name="clientName" required 
+                                       placeholder="Введите имя">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="clientPhone" class="form-label">Номер телефона</label>
+                                <input type="tel" class="form-control" id="clientPhone" name="clientPhone" 
+                                       placeholder="+996 (xxx) xxx-xxx">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="appointmentDate" class="form-label">Дата записи *</label>
+                                <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="appointmentTime" class="form-label">Время записи *</label>
+                                <select class="form-control" id="appointmentTime" name="appointmentTime" required>
+                                    <option value="">Выберите время</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Комментарии</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Дополнительная информация..."></textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-custom" id="submitBtn">
+                                <span class="btn-text">
+                                    <i class="fas fa-calendar-check me-2"></i>Записаться
+                                </span>
+                                <span class="loading">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>Создание...
+                                </span>
+                            </button>
+                            <button type="button" class="btn btn-secondary-custom" onclick="hideCreateForm()">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- My Appointments -->
+            <div class="card" id="appointmentsCard">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-calendar-alt me-2"></i>Мои записи
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="appointmentsList">
+                        <div class="text-center">
+                            <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                            <p class="mt-2 text-muted">Загрузка записей...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class AppointmentManager {
+            constructor() {
+                this.token = localStorage.getItem('token');
+                this.user = JSON.parse(localStorage.getItem('user') || '{}');
+                this.init();
+            }
+
+            init() {
+                if (!this.token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                this.setupEventListeners();
+                this.loadMyAppointments();
+            }
+
+            setupEventListeners() {
+                // Appointment form submission
+                document.getElementById('appointmentForm').addEventListener('submit', this.handleSubmit.bind(this));
+                
+                // Date change handler
+                document.getElementById('appointmentDate').addEventListener('change', this.handleDateChange.bind(this));
+            }
+
+            async loadMyAppointments() {
+                try {
+                    const response = await fetch('/api/appointments/my', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const appointments = await response.json();
+                        this.displayAppointments(appointments);
+                    } else if (response.status === 401) {
+                        this.logout();
+                    } else {
+                        this.showAlert('Ошибка при загрузке записей', 'danger');
+                    }
+                } catch (error) {
+                    this.showAlert('Ошибка соединения с сервером', 'danger');
+                }
+            }
+
+            displayAppointments(appointments) {
+                const container = document.getElementById('appointmentsList');
+                
+                if (appointments.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <h4>У вас пока нет записей</h4>
+                            <p>Создайте новую запись, нажав кнопку "Новая запись"</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const appointmentsHtml = appointments.map(appointment => {
+                    const statusClass = this.getStatusClass(appointment.status);
+                    const statusText = this.getStatusText(appointment.status);
+                    
+                    return `
+                        <div class="appointment-card">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <div class="appointment-date">
+                                        <i class="fas fa-calendar me-2"></i>
+                                        ${this.formatDate(appointment.appointmentDate)}
+                                    </div>
+                                    <div class="appointment-time">
+                                        <i class="fas fa-clock me-2"></i>
+                                        ${appointment.appointmentTime}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="mb-1">${appointment.clientName}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-phone me-1"></i>
+                                        ${appointment.clientPhone || 'Не указан'}
+                                    </small>
+                                    ${appointment.notes ? `<p class="mt-2 mb-0 small text-muted">${appointment.notes}</p>` : ''}
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="appointment-status ${statusClass}">
+                                        ${statusText}
+                                    </span>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <small class="text-muted">
+                                        Создано: ${this.formatDateTime(appointment.createdAt)}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = appointmentsHtml;
+            }
+
+            getStatusClass(status) {
+                switch (status) {
+                    case 'SCHEDULED': return 'status-scheduled';
+                    case 'COMPLETED': return 'status-completed';
+                    case 'CANCELLED': return 'status-cancelled';
+                    default: return 'status-scheduled';
+                }
+            }
+
+            getStatusText(status) {
+                switch (status) {
+                    case 'SCHEDULED': return 'Запланировано';
+                    case 'COMPLETED': return 'Выполнено';
+                    case 'CANCELLED': return 'Отменено';
+                    default: return 'Запланировано';
+                }
+            }
+
+            async handleDateChange() {
+                const date = document.getElementById('appointmentDate').value;
+                const timeSelect = document.getElementById('appointmentTime');
+                
+                if (!date) {
+                    timeSelect.innerHTML = '<option value="">Выберите время</option>';
+                    return;
+                }
+
+                // Check if date is in the past
+                const selectedDate = new Date(date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate < today) {
+                    this.showAlert('Дата записи не может быть в прошлом', 'danger');
+                    document.getElementById('appointmentDate').value = '';
+                    timeSelect.innerHTML = '<option value="">Выберите время</option>';
+                    return;
+                }
+
+                // Load available time slots
+                try {
+                    const response = await fetch(`/api/appointments/taken-times?date=${date}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const takenTimes = await response.json();
+                        this.updateTimeOptions(takenTimes);
+                    }
+                } catch (error) {
+                    console.error('Error loading time slots:', error);
+                }
+            }
+
+            updateTimeOptions(takenTimes) {
+                const timeSelect = document.getElementById('appointmentTime');
+                const timeSlots = ['09:00', '11:00', '13:00', '15:00', '17:00', '19:00', '21:00'];
+                
+                timeSelect.innerHTML = '<option value="">Выберите время</option>';
+                
+                timeSlots.forEach(time => {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    
+                    if (takenTimes.includes(time)) {
+                        option.textContent = `${time} (занято)`;
+                        option.disabled = true;
+                    } else {
+                        option.textContent = time;
+                    }
+                    
+                    timeSelect.appendChild(option);
+                });
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+
+                const formData = new FormData(e.target);
+                const data = {
+                    clientName: formData.get('clientName'),
+                    clientPhone: formData.get('clientPhone') || null,
+                    appointmentDate: formData.get('appointmentDate'),
+                    appointmentTime: formData.get('appointmentTime'),
+                    notes: formData.get('notes') || null
+                };
+
+                // Validate form
+                if (!this.validateForm(data)) {
+                    return;
+                }
+
+                this.setLoading(true);
+
+                try {
+                    const response = await fetch('/api/appointments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        this.showAlert('Запись успешно создана!', 'success');
+                        this.hideCreateForm();
+                        this.loadMyAppointments();
+                        e.target.reset();
+                    } else {
+                        this.showAlert(result.error || 'Ошибка при создании записи', 'danger');
+                    }
+                } catch (error) {
+                    this.showAlert('Ошибка соединения с сервером', 'danger');
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            validateForm(data) {
+                let isValid = true;
+
+                if (!data.clientName.trim()) {
+                    this.setFieldError('clientName', 'Имя клиента обязательно');
+                    isValid = false;
+                }
+
+                if (!data.appointmentDate) {
+                    this.setFieldError('appointmentDate', 'Дата записи обязательна');
+                    isValid = false;
+                }
+
+                if (!data.appointmentTime) {
+                    this.setFieldError('appointmentTime', 'Время записи обязательно');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            setFieldError(fieldName, message) {
+                const field = document.getElementById(fieldName);
+                const feedback = field.parentNode.querySelector('.invalid-feedback');
+                
+                field.classList.add('is-invalid');
+                if (feedback) {
+                    feedback.textContent = message;
+                }
+            }
+
+            setLoading(loading) {
+                const submitBtn = document.getElementById('submitBtn');
+                const btnText = submitBtn.querySelector('.btn-text');
+                const loadingSpinner = submitBtn.querySelector('.loading');
+                
+                if (loading) {
+                    btnText.style.display = 'none';
+                    loadingSpinner.classList.add('show');
+                    submitBtn.disabled = true;
+                } else {
+                    btnText.style.display = 'inline';
+                    loadingSpinner.classList.remove('show');
+                    submitBtn.disabled = false;
+                }
+            }
+
+            showCreateForm() {
+                document.getElementById('createFormCard').style.display = 'block';
+                document.getElementById('appointmentsCard').style.display = 'none';
+            }
+
+            hideCreateForm() {
+                document.getElementById('createFormCard').style.display = 'none';
+                document.getElementById('appointmentsCard').style.display = 'block';
+            }
+
+            showAlert(message, type) {
+                const container = document.getElementById('alertContainer');
+                container.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('ru-RU', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+
+            formatDateTime(dateTimeString) {
+                const date = new Date(dateTimeString);
+                return date.toLocaleString('ru-RU');
+            }
+
+            logout() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
+        }
+
+        // Global functions for navbar
+        function showCreateForm() {
+            window.appointmentManager.showCreateForm();
+        }
+
+        function hideCreateForm() {
+            window.appointmentManager.hideCreateForm();
+        }
+
+        function loadMyAppointments() {
+            window.appointmentManager.loadMyAppointments();
+        }
+
+        function logout() {
+            window.appointmentManager.logout();
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.appointmentManager = new AppointmentManager();
+        });
+    </script>
+</body>
+</html>

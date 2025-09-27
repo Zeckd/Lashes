@@ -42,6 +42,10 @@ public class AppointmentService {
     }
 
     public List<Appointment> getAllAppointments() {
+        return appointmentRepository.findAll();
+    }
+
+    public List<Appointment> getUpcomingAppointments() {
         return appointmentRepository.findUpcomingAppointments(LocalDate.now());
     }
 

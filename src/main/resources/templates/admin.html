@@ -328,6 +328,16 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="loadUpcomingAppointments()">
+                            <i class="fas fa-clock me-1"></i>Предстоящие
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="loadTodayAppointments()">
+                            <i class="fas fa-calendar-day me-1"></i>Сегодня
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" onclick="loadStatistics()">
                             <i class="fas fa-chart-bar me-1"></i>Статистика
                         </a>
@@ -527,6 +537,48 @@
                 }
             }
 
+            async loadUpcomingAppointments() {
+                try {
+                    const response = await fetch('/api/admin/appointments/upcoming', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const appointments = await response.json();
+                        this.displayAppointments(appointments);
+                    } else if (response.status === 401) {
+                        this.logout();
+                    } else {
+                        this.showAlert('Ошибка при загрузке предстоящих записей', 'danger');
+                    }
+                } catch (error) {
+                    this.showAlert('Ошибка соединения с сервером', 'danger');
+                }
+            }
+
+            async loadTodayAppointments() {
+                try {
+                    const response = await fetch('/api/admin/appointments/today', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const appointments = await response.json();
+                        this.displayAppointments(appointments);
+                    } else if (response.status === 401) {
+                        this.logout();
+                    } else {
+                        this.showAlert('Ошибка при загрузке записей на сегодня', 'danger');
+                    }
+                } catch (error) {
+                    this.showAlert('Ошибка соединения с сервером', 'danger');
+                }
+            }
+
             displayAppointments(appointments) {
                 const tbody = document.getElementById('appointmentsTableBody');
                 
@@ -544,6 +596,13 @@
                     `;
                     return;
                 }
+
+                // Сортируем записи по дате и времени
+                appointments.sort((a, b) => {
+                    const dateA = new Date(a.appointmentDate + 'T' + a.appointmentTime);
+                    const dateB = new Date(b.appointmentDate + 'T' + b.appointmentTime);
+                    return dateA - dateB;
+                });
 
                 const appointmentsHtml = appointments.map(appointment => {
                     const statusClass = this.getStatusClass(appointment.status);
@@ -710,6 +769,14 @@
         // Global functions
         function loadAllAppointments() {
             window.adminManager.loadAllAppointments();
+        }
+
+        function loadUpcomingAppointments() {
+            window.adminManager.loadUpcomingAppointments();
+        }
+
+        function loadTodayAppointments() {
+            window.adminManager.loadTodayAppointments();
         }
 
         function loadStatistics() {

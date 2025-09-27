@@ -2,6 +2,7 @@ package kg.mega.lashes.models.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class UserRegistrationDto {
@@ -20,6 +21,10 @@ public class UserRegistrationDto {
     @NotBlank(message = "Подтверждение пароля обязательно")
     private String confirmPassword;
 
+    @Pattern(
+        regexp = "\\+996\\d{9}",
+        message = "Номер телефона должен начинаться с +996 и содержать всего 13 символов (например, +996555123456)"
+    )
     private String phoneNumber;
 
     private Boolean rememberMe = false;

@@ -223,9 +223,9 @@
             </div>
 
             <div class="form-group">
-                <label for="phoneNumber" class="form-label">Номер телефона</label>
+                <label for="phoneNumber" class="form-label">Номер телефона *</label>
                 <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" 
-                       placeholder="+996 (xxx) xxx-xxx">
+                       placeholder="+996555123456" required>
                 <div class="invalid-feedback"></div>
             </div>
 
@@ -288,6 +288,10 @@
                 // Password confirmation validation
                 const confirmPassword = document.getElementById('confirmPassword');
                 confirmPassword.addEventListener('input', () => this.validatePasswordMatch());
+
+                // Phone number validation
+                const phoneNumber = document.getElementById('phoneNumber');
+                phoneNumber.addEventListener('input', () => this.validatePhoneNumber());
             }
 
             validateField(field) {
@@ -327,6 +331,14 @@
                     }
                 }
 
+                if (value && field.id === 'phoneNumber') {
+                    const phoneRegex = /^\+996\d{9}$/;
+                    if (!phoneRegex.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Номер телефона должен начинаться с +996 и содержать всего 13 символов (например, +996555123456)';
+                    }
+                }
+
                 if (field.id === 'confirmPassword') {
                     this.validatePasswordMatch();
                     return;
@@ -339,7 +351,7 @@
             validatePasswordMatch() {
                 const password = document.getElementById('password');
                 const confirmPassword = document.getElementById('confirmPassword');
-                
+
                 if (confirmPassword.value && password.value !== confirmPassword.value) {
                     this.setFieldValidation(confirmPassword, false, 'Пароли не совпадают');
                     return false;
@@ -347,6 +359,11 @@
                     this.setFieldValidation(confirmPassword, true, '');
                 }
                 return true;
+            }
+
+            validatePhoneNumber() {
+                const phoneNumber = document.getElementById('phoneNumber');
+                return this.validateField(phoneNumber);
             }
 
             setFieldValidation(field, isValid, errorMessage) {
@@ -393,6 +410,12 @@
                 // Check password match
                 if (!this.validatePasswordMatch()) {
                     this.showAlert('Пароли не совпадают', 'danger');
+                    return;
+                }
+
+                // Check phone number format
+                if (!this.validatePhoneNumber()) {
+                    this.showAlert('Номер телефона должен быть в формате +996555123456', 'danger');
                     return;
                 }
 

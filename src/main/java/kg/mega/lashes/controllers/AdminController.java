@@ -82,4 +82,13 @@ public class AdminController {
         
         return ResponseEntity.ok(statistics);
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<Map<String, String>> testAdminAccess() {
+        Map<String, String> response = Map.of(
+            "message", "Админ доступ работает!",
+            "timestamp", java.time.LocalDateTime.now().toString()
+        );
+        return ResponseEntity.ok(response);
+    }
 }

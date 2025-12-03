@@ -1,46 +1,89 @@
+#version: '3.8'
+#
+#services:
+#  # 1. Сервис Базы Данных (PostgreSQL)
+#  db:
+#    image: postgres:14-alpine
+#    container_name: db
+#    restart: always
+#    environment:
+#      # Переменные, которые БД использует для инициализации
+#      POSTGRES_DB: db
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: isken
+#    ports:
+#      # Опционально: проброс порта БД на хост (для локального подключения, например, через DBeaver)
+#      - "5432:5432"
+#    volumes:
+#      # Постоянное хранение данных, чтобы они не терялись при перезапуске контейнера
+#      - postgres_data:/var/lib/postgresql/data
+#
+#  # 2. Сервис Приложения (Spring Boot)
+#  app:
+#    build: . # Инструкция для Docker: собери образ из текущей директории, используя Dockerfile
+#    container_name: lashes_app
+#    ports:
+#      # Проброс порта приложения: [порт на хосте]:[порт в контейнере]
+#      - "8080:8080"
+#    environment:
+#      # Настройки для подключения к БД
+#      # Важно: используйте имя сервиса 'db' как hostname
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/db
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: isken
+#
+#      # Настройки для 'Забыл пароль' (SMTP) - замените на свои
+#      SPRING_MAIL_HOST: smtp.gmail.com
+#      SPRING_MAIL_PORT: 587
+#      SPRING_MAIL_USERNAME: iskenpubg@gmail.com
+#      SPRING_MAIL_PASSWORD: ujtvgyeyxgtpskrg
+#
+#    depends_on:
+#      - db # Гарантируем, что БД запустится до приложения
+#
+## Определяем именованный том для хранения данных БД
+#volumes:
+#  postgres_data:
+
 version: '3.8'
 
 services:
-  # 1. Сервис Базы Данных (PostgreSQL)
-  db:
-    image: postgres:14-alpine
-    container_name: db
-    restart: always
+  postgres:
+    image: postgres:15-alpine
+    container_name: kindergarten-postgres
     environment:
-      # Переменные, которые БД использует для инициализации
       POSTGRES_DB: db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: isken
     ports:
-      # Опционально: проброс порта БД на хост (для локального подключения, например, через DBeaver)
       - "5432:5432"
     volumes:
-      # Постоянное хранение данных, чтобы они не терялись при перезапуске контейнера
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # 2. Сервис Приложения (Spring Boot)
   app:
-    build: . # Инструкция для Docker: собери образ из текущей директории, используя Dockerfile
-    container_name: lashes_app
+    build: .
+    container_name: kindergarten-app
     ports:
-      # Проброс порта приложения: [порт на хосте]:[порт в контейнере]
       - "8080:8080"
     environment:
-      # Настройки для подключения к БД
-      # Важно: используйте имя сервиса 'db' как hostname
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: isken
-
-      # Настройки для 'Забыл пароль' (SMTP) - замените на свои
-      SPRING_MAIL_HOST: smtp.gmail.com
-      SPRING_MAIL_PORT: 587
-      SPRING_MAIL_USERNAME: iskenpubg@gmail.com
-      SPRING_MAIL_PASSWORD: ujtvgyeyxgtpskrg
-
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-smtp.gmail.com}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-587}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
     depends_on:
-      - db # Гарантируем, что БД запустится до приложения
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
 
-# Определяем именованный том для хранения данных БД
 volumes:
   postgres_data:
+

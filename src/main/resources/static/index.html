@@ -555,8 +555,9 @@
 
             appointments.forEach(app => {
                 const row = tbody.insertRow();
-                row.insertCell().textContent = app.date;
-                row.insertCell().textContent = app.time;
+                row.insertCell().textContent = app.appointmentDate;
+                row.insertCell().textContent = app.appointmentTime;
+
                 row.insertCell().textContent = app.status;
                 row.insertCell().textContent = app.notes || '-';
             });
@@ -621,9 +622,11 @@
             appointments.forEach(app => {
                 const row = tbody.insertRow();
                 row.insertCell().textContent = app.id;
-                row.insertCell().textContent = app.user ? app.user.name : 'N/A';
-                row.insertCell().textContent = app.date;
-                row.insertCell().textContent = app.time;
+                row.insertCell().textContent = app.clientName ?? 'N/A';
+
+                row.insertCell().textContent = app.appointmentDate;
+                row.insertCell().textContent = app.appointmentTime;
+
                 row.insertCell().textContent = app.status;
 
                 const actionsCell = row.insertCell();

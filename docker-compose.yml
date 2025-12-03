@@ -4,7 +4,7 @@ services:
   # 1. Сервис Базы Данных (PostgreSQL)
   db:
     image: postgres:14-alpine
-    container_name: lashes_db
+    container_name: db
     restart: always
     environment:
       # Переменные, которые БД использует для инициализации

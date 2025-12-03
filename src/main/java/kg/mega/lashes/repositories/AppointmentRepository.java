@@ -28,5 +28,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findMyActiveAppointmentsWithUser(@Param("userId") Long userId);
     @Query("SELECT a FROM Appointment a JOIN FETCH a.user")
     List<Appointment> findAllWithUser();
-    List<Appointment> findByUserEmail(String email);
+    @Query("SELECT a FROM Appointment a JOIN FETCH a.user u WHERE u.email = :email")
+    List<Appointment> findByUserEmail(@Param("email") String email);
 }

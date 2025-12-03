@@ -6,6 +6,7 @@ import kg.mega.lashes.models.dtos.AppointmentCreateDto;
 import kg.mega.lashes.repositories.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,7 +20,6 @@ public class AppointmentService {
     private AppointmentRepository appointmentRepository;
 
     public Appointment createAppointment(AppointmentCreateDto createDto, User user) {
-        // Проверяем, не занято ли время
         if (appointmentRepository.existsByAppointmentDateAndAppointmentTime(
                 createDto.getAppointmentDate(), createDto.getAppointmentTime())) {
             throw new RuntimeException("Выбранное время уже занято");
@@ -47,6 +47,11 @@ public class AppointmentService {
 
     public List<Appointment> getUpcomingAppointments() {
         return appointmentRepository.findUpcomingAppointments(LocalDate.now());
+    }
+    @Transactional // !!! Важно, чтобы этот метод был транзакционным !!!
+    public List<Appointment> getMyAppointments(User currentUser) {
+        // Используем новый метод, который загружает все необходимые данные
+        return appointmentRepository.findMyActiveAppointmentsWithUser(currentUser.getId());
     }
 
     public List<Appointment> getAppointmentsByDate(LocalDate date) {

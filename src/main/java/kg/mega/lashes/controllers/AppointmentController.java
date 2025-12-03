@@ -7,6 +7,7 @@ import kg.mega.lashes.models.dtos.AppointmentCreateDto;
 import kg.mega.lashes.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +39,16 @@ public class AppointmentController {
 
     @GetMapping("/my")
     public ResponseEntity<List<Appointment>> getMyAppointments(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        List<Appointment> appointments = appointmentService.getUserAppointments(user);
-        return ResponseEntity.ok(appointments);
+        try {
+            User user = (User) authentication.getPrincipal();
+            // Метод сервиса возвращает уже готовый список записей
+            List<Appointment> appointments = appointmentService.getMyAppointments(user);
+            return ResponseEntity.ok(appointments);
+        } catch (Exception e) {
+            // Если ошибка 500 все же возникает, она будет здесь перехвачена
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
     }
 
     @GetMapping("/taken-times")

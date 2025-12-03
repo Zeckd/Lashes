@@ -82,36 +82,4 @@ public class AdminController {
         
         return ResponseEntity.ok(statistics);
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<Map<String, String>> testAdminAccess() {
-        Map<String, String> response = Map.of(
-            "message", "Админ доступ работает!",
-            "timestamp", java.time.LocalDateTime.now().toString()
-        );
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/appointments/upcoming")
-    public ResponseEntity<List<Appointment>> getUpcomingAppointments() {
-        List<Appointment> appointments = appointmentService.getUpcomingAppointments();
-        return ResponseEntity.ok(appointments);
-    }
-
-    @GetMapping("/appointments/today")
-    public ResponseEntity<List<Appointment>> getTodayAppointments() {
-        List<Appointment> appointments = appointmentService.getAppointmentsByDate(java.time.LocalDate.now());
-        return ResponseEntity.ok(appointments);
-    }
-
-    @GetMapping("/appointments/{id}")
-    public ResponseEntity<Appointment> getAppointmentById(@PathVariable Long id) {
-        try {
-            Appointment appointment = appointmentService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Запись не найдена"));
-            return ResponseEntity.ok(appointment);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }

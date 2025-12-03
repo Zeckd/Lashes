@@ -1,5 +1,6 @@
 package kg.mega.lashes.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -49,6 +51,13 @@ public class User implements UserDetails {
 
     @Column(name = "remember_me")
     private Boolean rememberMe = false;
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Appointment> appointments;
 
     @PrePersist
     protected void onCreate() {
@@ -59,6 +68,14 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     @Override
@@ -162,5 +179,21 @@ public class User implements UserDetails {
 
     public enum Role {
         USER, ADMIN
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public LocalDateTime getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
+    public void setResetTokenExpiry(LocalDateTime resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
     }
 }

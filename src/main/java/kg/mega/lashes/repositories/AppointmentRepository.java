@@ -23,4 +23,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     
     @Query("SELECT a FROM Appointment a WHERE a.appointmentDate >= :startDate ORDER BY a.appointmentDate, a.appointmentTime")
     List<Appointment> findUpcomingAppointments(@Param("startDate") LocalDate startDate);
+
+    @Query("SELECT a FROM Appointment a JOIN FETCH a.user u WHERE u.id = :userId ORDER BY a.appointmentDate, a.appointmentTime")
+    List<Appointment> findMyActiveAppointmentsWithUser(@Param("userId") Long userId);
 }

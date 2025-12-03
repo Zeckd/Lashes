@@ -26,7 +26,6 @@ public class HealthController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            // Проверяем подключение к базе данных
             try (Connection connection = dataSource.getConnection()) {
                 response.put("status", "success");
                 response.put("message", "База данных подключена");
@@ -34,7 +33,6 @@ public class HealthController {
                 response.put("url", connection.getMetaData().getURL());
                 response.put("username", connection.getMetaData().getUserName());
                 
-                // Проверяем, есть ли таблица users
                 try {
                     var statement = connection.createStatement();
                     var resultSet = statement.executeQuery("SELECT COUNT(*) FROM users");

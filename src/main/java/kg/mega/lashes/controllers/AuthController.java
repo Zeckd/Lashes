@@ -2,9 +2,13 @@ package kg.mega.lashes.controllers;
 
 import jakarta.validation.Valid;
 import kg.mega.lashes.models.User;
+import kg.mega.lashes.models.dtos.ForgotPasswordRequest;
+import kg.mega.lashes.models.dtos.ResetPasswordRequest;
 import kg.mega.lashes.models.dtos.UserLoginDto;
 import kg.mega.lashes.models.dtos.UserRegistrationDto;
+import kg.mega.lashes.repositories.UserRepository;
 import kg.mega.lashes.security.JwtUtils;
+import kg.mega.lashes.services.EmailService;
 import kg.mega.lashes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +17,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,10 +40,17 @@ public class AuthController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistrationDto registrationDto) {
         try {
-            // Проверяем совпадение паролей
             if (!registrationDto.getPassword().equals(registrationDto.getConfirmPassword())) {
                 Map<String, String> error = new HashMap<>();
                 error.put("error", "Пароли не совпадают");
@@ -45,7 +59,6 @@ public class AuthController {
             
             User user = userService.registerUser(registrationDto);
             
-            // Автоматически аутентифицируем пользователя после регистрации
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(registrationDto.getEmail(), registrationDto.getPassword())
             );
@@ -110,13 +123,11 @@ public class AuthController {
     @PostMapping("/create-admin")
     public ResponseEntity<?> createAdmin(@Valid @RequestBody UserRegistrationDto registrationDto) {
         try {
-            // Проверяем, есть ли уже админы в системе
             if (userService.hasAnyAdmin()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Администратор уже существует"));
             }
             
             User user = userService.registerUser(registrationDto);
-            // Устанавливаем роль админа
             user.setRole(User.Role.ADMIN);
             user = userService.save(user);
             
@@ -138,7 +149,6 @@ public class AuthController {
             User admin = userService.findByEmail("iskenpubg@gmail.com")
                     .orElseThrow(() -> new RuntimeException("Админ не найден"));
             
-            // Сбрасываем пароль на дефолтный
             admin.setPassword(userService.encodePassword("isken1234-"));
             userService.save(admin);
             
@@ -247,7 +257,6 @@ public class AuthController {
             User user = userService.findById(userId)
                     .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
             
-            // Нельзя удалить самого себя
             if (user.getId().equals(currentUser.getId())) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Нельзя удалить самого себя"));
             }
@@ -275,4 +284,47 @@ public class AuthController {
         userResponse.put("createdAt", user.getCreatedAt());
         return userResponse;
     }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Пользователь с таким email не найден"));
+
+        // Генерируем случайный токен (можно использовать UUID или Random 6 цифр)
+        String token = UUID.randomUUID().toString().substring(0, 6); // Берем первые 6 символов для краткости
+
+        // Устанавливаем токен и время жизни (например, 15 минут)
+        user.setResetToken(token);
+        user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
+        userRepository.save(user);
+
+        // Отправляем письмо
+        String message = "Ваш код для сброса пароля: " + token + "\n\nКод действителен 15 минут.";
+        emailService.sendSimpleMessage(user.getEmail(), "Восстановление пароля", message);
+
+        return ResponseEntity.ok(Map.of("message", "Код для сброса пароля отправлен на почту"));
+    }
+
+    // 2. Сброс пароля (ввод кода и нового пароля)
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        User user = userRepository.findByResetToken(request.getToken())
+                .orElseThrow(() -> new RuntimeException("Неверный код сброса"));
+
+        // Проверяем срок действия токена
+        if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Срок действия кода истек"));
+        }
+
+        // Обновляем пароль
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        // Очищаем токен, чтобы его нельзя было использовать повторно
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "Пароль успешно изменен"));
+    }
+
 }

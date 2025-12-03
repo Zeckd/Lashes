@@ -41,10 +41,13 @@ public class AppointmentService {
         return appointmentRepository.findByUser(user);
     }
 
+    @Transactional(readOnly = true)
     public List<Appointment> getAllAppointments() {
-        return appointmentRepository.findAll();
+        return appointmentRepository.findAllWithUser();
     }
-
+    public List<Appointment> findAppointmentsByUserEmail(String email) {
+        return appointmentRepository.findByUserEmail(email);
+    }
     public List<Appointment> getUpcomingAppointments() {
         return appointmentRepository.findUpcomingAppointments(LocalDate.now());
     }

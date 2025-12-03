@@ -19,7 +19,8 @@ public class Appointment {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
     @NotBlank(message = "Имя клиента не может быть пустым")
     @Column(name = "client_name", nullable = false)
@@ -51,7 +52,6 @@ public class Appointment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -67,6 +67,7 @@ public class Appointment {
     public Long getId() {
         return id;
     }
+
 
     public void setId(Long id) {
         this.id = id;

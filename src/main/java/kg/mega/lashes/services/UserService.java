@@ -33,6 +33,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+
     public User registerUser(UserRegistrationDto registrationDto) {
         if (userRepository.existsByEmail(registrationDto.getEmail())) {
             throw new RuntimeException("Пользователь с таким email уже существует");

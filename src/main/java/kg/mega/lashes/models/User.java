@@ -57,6 +57,7 @@ public class User implements UserDetails {
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Appointment> appointments;
 
     @PrePersist
